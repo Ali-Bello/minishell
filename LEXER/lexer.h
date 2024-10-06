@@ -2,40 +2,40 @@
 #define LEXER_H
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include "../includes/malloc.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
-typedef enum e_token
+typedef struct s_node
 {
-	REDIRECTION,
-	PIPE,
-	WORD,
-	VAR,
-	SINGLE_QUOT,
-	DOUBLE_QUOT,
-	SPACE,
-}	t_token;
-typedef struct s_tokens
-{
-	t_token token;
-	char *str;
-	struct s_tokens *next;
-}	t_tokens;
+    char *s;
+    int index;
+    int type;
+    struct s_node *next;
+} t_node;
 
 
-int		ft_strlen(char *str);
-char	*ft_strndup(char *str, int size);
-/*
-iswhat (char c)
-quot			(c) == (")			= return : 1;
-quot			(c) == (')			= return : 2;
-space			(c) == ( )			= return : 3;
-pipe			(c) == (|)			= return : 4;
-redirection		(c) == (>)			= return : 5;
-redirection		(c) == (<)			= return : 6;
-var				(c) == ($)			= return : 7;
-*/ 
-int		iswhat(char c);
+// type == 1 == |
+// type == 2 == <<
+// type == 3 == >>
+// type == 4 == <
+// type == 5 == >
+// type == 6 == word
 
+t_node *new_node(char *s, int start, int end, int type);
+void add_node(t_node **node, t_node *new_node);
+void swap_node(t_node *a, t_node *b);
+void sort_node(t_node **node);
+
+
+void parse_words(char *s, t_node **node);
+t_node *parse_redirection(char *s);
+int chechk_re(char *s, int i);
+void set_space(char *s);
+t_node *parse(char *s);
+
+void    *ft_memset(void *b, int c, size_t len);
+char *ft_strndup(char *str, int size);
+int   ft_strlen(char *s);
 #endif

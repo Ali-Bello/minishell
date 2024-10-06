@@ -1,3 +1,0 @@
-str = "ls -la | cat test.txt| wc -n"
-
-
