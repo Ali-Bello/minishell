@@ -43,18 +43,17 @@ void    parse_words(char *s, int *i)
     while (s[j] && !isspace(s[j]) && !is_operator(s[j]))
     {
         if (s[j] == '"' || s[j] == '\'')
-            parse_quotes(s, &j);
+            parse_quotes(&s[j], &j);
         j++;
     }
     if (j)
         add_node(&info.node, new_node(ft_strndup(s, j), *i, 6));
-    *i += j - (is_operator(s[j]));
+    *i += j;
 }
 
 
 void    parse_operators(char *s, int *i)
 {
-    int j;
     int token;
 
     if (s[0] == '>')
@@ -73,8 +72,8 @@ void    parse_operators(char *s, int *i)
     }
     else if (s[0] == '|')
         token = PIPE;
-    j = 1 ;
-    add_node(&info.node, new_node(ft_strndup(s, j + (token == HEREDOC || token == APPEND)), *i, token));
+    add_node(&info.node, new_node(ft_strndup(s, 1 +\
+    + (token == HEREDOC || token == APPEND)), *i, token));
     *i += (token == APPEND || token == HEREDOC);
 }
 
@@ -87,10 +86,11 @@ void    parse(char *s)
 	tmp = ft_strndup(s, ft_strlen(s));
     while (tmp && tmp[i])
     {
-        if (tmp[i] && (tmp[i] == '|' || tmp[i] == '>' || tmp[i] == '<'))
-            parse_operators(&tmp[i], &i);
-        else if (!isspace(tmp[i]))
+        if (!isspace(tmp[i]))
             parse_words(&tmp[i], &i);
+        if (tmp[i] && (tmp[i] == '|' ||
+            tmp[i] == '>' || tmp[i] == '<'))
+            parse_operators(&tmp[i], &i);
         i += (tmp[i] != '\0');
     }
 	return(free(tmp));
