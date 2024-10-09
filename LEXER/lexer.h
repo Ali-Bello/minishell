@@ -14,9 +14,7 @@ typedef enum s_token
     APPEND,
     REDIRIN,
     REDIROUT,
-    WORD,
-    SINGLEQUOTEDWORD,
-    DOUBLEQUOTEDWORD
+    WORD
 } e_token;
 
 typedef struct s_node

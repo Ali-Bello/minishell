@@ -19,6 +19,20 @@ int is_operator(char c)
     return ((c == '|' || c == '>' || c == '<'));
 }
 
+void    parse_quotes(char *s, int *i)
+{
+    int     j;
+    char    delim;
+
+    if (!s)
+        return ;
+    j = 1;
+    delim = '\'' * (s[0] == '\'') + '"' * (s[0] == '"');
+    while (s[j] && s[j] != delim)
+        j++;
+    *i += j;
+}
+
 void    parse_words(char *s, int *i)
 {
     int j;
@@ -26,27 +40,17 @@ void    parse_words(char *s, int *i)
     if (!s)
         return;
     j = 0;
-    while (s[j] && !is_operator(s[j]) && !isspace(s[j])
-        &&  s[j] != '"' && s[j] != '\'')
+    while (s[j] && !isspace(s[j]) && !is_operator(s[j]))
+    {
+        if (s[j] == '"' || s[j] == '\'')
+            parse_quotes(s, &j);
         j++;
-    add_node(&info.node, new_node(ft_strndup(s, j), *i, 6));
-    *i += j;
+    }
+    if (j)
+        add_node(&info.node, new_node(ft_strndup(s, j), *i, 6));
+    *i += j - (is_operator(s[j]));
 }
 
-void    parse_quotes(char *s, int *i)
-{
-    int     j;
-    char    delim;
-
-    j = 1;
-    delim = '\'' * (s[0] == '\'') + '"' * (s[0] == '"');
-    while (s[j] && s[j] != delim)
-        j++;
-    printf("j = %d\n", j);
-    delim = SINGLEQUOTEDWORD * (delim == '\'') + DOUBLEQUOTEDWORD * (delim == '"');
-    add_node(&info.node, new_node(ft_strndup(s, j + 1), *i, delim));
-    *i += j;
-}
 
 void    parse_operators(char *s, int *i)
 {
@@ -69,10 +73,9 @@ void    parse_operators(char *s, int *i)
     }
     else if (s[0] == '|')
         token = PIPE;
-    j  = (token == REDIROUT) + 2 * (token == APPEND || token == HEREDOC)\
-    + (token == REDIRIN) + (token == HEREDOC) + (token == PIPE);
-    add_node(&info.node, new_node(ft_strndup(s, j), *i, token));
-    *i += j;
+    j = 1 ;
+    add_node(&info.node, new_node(ft_strndup(s, j + (token == HEREDOC || token == APPEND)), *i, token));
+    *i += (token == APPEND || token == HEREDOC);
 }
 
 void    parse(char *s)
@@ -86,12 +89,9 @@ void    parse(char *s)
     {
         if (tmp[i] && (tmp[i] == '|' || tmp[i] == '>' || tmp[i] == '<'))
             parse_operators(&tmp[i], &i);
-        if (tmp[i] && (tmp[i] == '"' || tmp[i] == '\''))
-            parse_quotes(&tmp[i],  &i);
         else if (!isspace(tmp[i]))
             parse_words(&tmp[i], &i);
         i += (tmp[i] != '\0');
-
     }
 	return(free(tmp));
 }
