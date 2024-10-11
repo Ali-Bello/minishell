@@ -1,8 +1,8 @@
 #include "lexer.h"
 
-void add_node(t_node **node, t_node *new_node)
+void add_node(t_list **node, t_list *new_node)
 {
-	t_node *tmp;
+	t_list *tmp;
 
 	tmp = *node;
 	if (*node == NULL)
@@ -15,11 +15,11 @@ void add_node(t_node **node, t_node *new_node)
 	}
 }
 
-t_node *new_node(char *s, int i, int type)
+t_list *new_node(char *s, int i, int type)
 {
-	t_node *node;
+	t_list *node;
 
-	node = malloc(sizeof(t_node));
+	node = malloc(sizeof(t_list));
 	if (node == NULL)
 		return (NULL);
 	node->idx =  i;

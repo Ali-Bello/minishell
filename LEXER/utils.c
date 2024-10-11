@@ -32,12 +32,12 @@ void    *ft_memset(void *b, int c, size_t len)
         return (t);
 }
 
-int ft_strlen(char *s)
-{
-    int i;
+// int ft_strlen(char *s)
+// {
+//     int i;
 
-    i = 0;
-    while (s && s[i])
-        i++;
-    return (i);
-}
+//     i = 0;
+//     while (s && s[i])
+//         i++;
+//     return (i);
+// }

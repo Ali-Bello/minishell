@@ -31,15 +31,18 @@ typedef struct s_cmd
     t_redirection *redirs;   
 }   t_cmd;
 
-typedef enum e_token
+typedef enum s_token
 {
-    GROUPING,
-    LOGICAL_OPERATOR,
-    PIPELINE,
-    VARIABLE,
-    COMMAND,
+    PIPE,
+    HEREDOC,
+    APPEND,
+    REDIRIN,
+    REDIROUT,
+    AND,
+    OR,
+    PARENTHESIS,
     WILDCARD,
-    ASSIGNMENT
+    WORD
 } e_token;
 
 typedef struct s_node
