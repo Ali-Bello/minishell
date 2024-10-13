@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/10/11 05:12:10 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/13 06:22:20 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,75 +76,30 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (ptr);
 }
 
-
-char    *get_varname(char *s, int *j)
+void    word_parser(t_list **node)
 {
-    int i;
-
-    i = 0;
-    while (s[i] && !isspace(s[i]) && (isalnum(s[i]) || s[i] == '_'))
-        i++;
-    *j = i;
-    return (ft_strndup(s, i));
+    (*node)->s = expand_and_remove_quotes((*node)->s);
 }
-
-char *expand_var(char *s, int *i)
-{
-    char *var_name;
-    char *value;
-    char *holder;
-    int idx;
-
-    // Get the variable name starting after the '$'
-    var_name = get_varname(&s[*i + 1], &idx);
-    // Get the value of the environment variable (if it exists)
-    value = getenv(var_name);
-    // Join the beginning part of the string with the variable value and the rest of the string
-    holder = ft_strjoin(ft_strndup(s, *i), value);
-    holder = ft_strjoin(holder, &s[*i + idx + 1]);
-
-    free(var_name);
-    free(s);
-    *i += idx + 1;
-
-    return holder;
-}
-
-
-
 void    parser(t_list *list)
 {
     t_list *tmp;
+    int i;
 
     tmp = list;
     while (tmp)
     {
         if (tmp->type == WORD)
-        {
-            int i = 0;
-            int flag = 0;
-            while (tmp->s[i])
-            {
-                if (tmp->s[i] == '$' && !flag)
-                    tmp->s = expand_var(tmp->s, &i);
-                if (tmp->s[i] == '\'' && !flag)
-                    flag = 1;
-                else if (tmp->s[i] =='\'' && flag)
-                    flag = 0;
-                i++;
-            }
-        }
+            word_parser(&tmp);
         tmp = tmp->next;
     }
-
 }
 
 int main()
 {
-    char    *buf = readline("Minishell:>");
+    char    *buf = readline(BLUE"$$:"RESET);
     t_list *list = lexer(buf);
     parser(list);
     for (t_list *tmp = list;  tmp; tmp = tmp->next)
-        printf("node {s->[%s], idx = [%d],  type = [%d]}\n", tmp->s, tmp->idx, tmp->type);
+        printf("node {s->[%s], type = [%d]}\n", tmp->s, tmp->type);
     return (0);
 }
