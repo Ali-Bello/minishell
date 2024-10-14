@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 03:13:26 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/13 06:22:05 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/14 03:51:33 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ void    parse_words(t_list **list, char *s, int *i)
             parse_quotes(&s[j], &j);
         j++;
     }
-    if (j == 1 && s[0] == '*')
-        add_node(list, new_node(ft_strndup(s, 1), WILDCARD));
-    else if (j)
+    // if (j == 1 && s[0] == '*')
+    //     add_node(list, new_node(ft_strndup(s, 1), WILDCARD));
+    if (j)
         add_node(list, new_node(ft_strndup(s, j), WORD));
     *i += j;
 }

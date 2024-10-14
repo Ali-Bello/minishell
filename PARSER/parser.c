@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/10/13 06:22:20 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/13 06:28:01 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void    word_parser(t_list **node)
 {
     (*node)->s = expand_and_remove_quotes((*node)->s);
 }
+
 void    parser(t_list *list)
 {
     t_list *tmp;

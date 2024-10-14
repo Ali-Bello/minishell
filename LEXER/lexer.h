@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <dirent.h>
+#include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -67,9 +69,10 @@ char *expand_and_remove_quotes(char *s);
 void    parse_operators(t_list **list, char *s, int *i);
 void    parse_words(t_list **list, char *s, int *i);
 void    parse_quotes(char *s, int *i);
-
+void expand_wildcards(t_expand *params);
+char    *extend_string(t_expand *params);
+char	*ft_strjoin(char const *s1, char const *s2);
 t_list    *lexer(char *s);
-
 void    *ft_memset(void *b, int c, size_t len);
 char *ft_strndup(char *str, int size);
 size_t	ft_strlen(const char *s);

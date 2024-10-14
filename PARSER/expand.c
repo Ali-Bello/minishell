@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/13 06:18:10 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/14 05:47:57 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char    *get_varname(char *s, int *j)
     int i;
 
     i = 0;
-    while (s[i] && !isspace(s[i]) && (isalnum(s[i]) || s[i] == '_'))
+    while (s[i] && !isspace(s[i]))
         i++;
     *j += i;
     return (ft_strndup(s, i));
@@ -53,13 +53,13 @@ void    expand_var(t_expand *params)
     // }
     var_name = get_varname(&params->str[params->i + 1], &params->i); // Update *i to point to the end of var name
     value = getenv(var_name);
-    value_len = (value != NULL) * strlen(value) + (value == NULL) * 0;
+    if (!value)
+        value = "";
+    value_len = ft_strlen(value);
     // Expand the result buffer
-    // printf("-->[%d]\n", params->res_size);
     params->res = realloc(params->res, params->res_size + value_len + 1);
     if (!params->res) 
         return (free(var_name));// Handle allocation failure
-    
     strcpy(params->res + params->res_idx, value);
     params->res_idx += value_len;
     free(var_name);
@@ -109,6 +109,11 @@ char *expand_and_remove_quotes(char *s)
         if (s[params.i] == '$' && !quotes_flags[1])
         {
             expand_var(&params);
+            continue;
+        }
+        if (s[params.i] == '*' && !quotes_flags[1] && !quotes_flags[0])
+        {
+            expand_wildcards(&params);
             continue;
         }
         params.res = extend_string(&params);
