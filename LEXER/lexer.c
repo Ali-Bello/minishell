@@ -6,17 +6,11 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 03:13:26 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/15 05:30:17 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/15 07:17:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int is_operator(char c)
-{
-    return ((c == '|' || c == '>' || c == '<'\
-    || c ==  '&' || c == '('));
-}
 
 void    parse_quotes(char *s, int *i)
 {
@@ -53,7 +47,7 @@ void    parse_words(t_lexer_list **list, char *s, int *i)
     if (!s)
         return;
     j = 0;
-    while (s[j] && !isspace(s[j]) && !is_operator(s[j]))
+    while (s[j] && !ft_isspace(s[j]) && !is_operator(s[j]))
     {
         if (s[j] == '"' || s[j] == '\'')
             parse_quotes(&s[j], &j);
@@ -103,7 +97,7 @@ t_lexer_list    *lexer(char *s)
 	tmp = ft_substr(s, 0, ft_strlen(s));
     while (tmp && tmp[i])
     {
-        if (!isspace(tmp[i]))
+        if (!ft_isspace(tmp[i]))
             parse_words(&list, &tmp[i], &i);
 		if (tmp[i] == '(')
 			parse_parenthesis(&list, &tmp[i], &i);

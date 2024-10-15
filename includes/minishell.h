@@ -68,9 +68,11 @@ typedef struct s_wildcard
     DIR *dir;
     struct dirent *entry;
     size_t  name_len;
+    int recursive_flag;
     bool    flag;
     char    **fragments;
     char    *pattern;
+    char    *current_dir;
 }   t_wildcard;
 
 t_lexer_list *new_node(char *s, int type);
@@ -80,7 +82,7 @@ char *expand_and_remove_quotes(char *s);
 void    parse_operators(t_lexer_list **list, char *s, int *i);
 void    parse_words(t_lexer_list **list, char *s, int *i);
 void    parse_quotes(char *s, int *i);
-void expand_wildcards(t_expand *params);
+void expand_wildcards(t_expand *params, int quotes, int dquotes);
 char    *extend_string(t_expand *params);
 char	*ft_strjoin(char const *s1, char const *s2);
 t_lexer_list    *lexer(char *s);
@@ -89,5 +91,14 @@ char *ft_strndup(char *str, int size);
 size_t	ft_strlen(const char *s);
 char	**ft_split(char const *s, char c);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
+int ft_isspace(char c);
+int is_operator(char c);
+char    *append_value(t_expand *params, char *value);
 
+void    recursive_match(t_expand *params, t_wildcard *specs);
+int    empty_space(char *s, int idx);
+void    construct_path(t_wildcard *specs, char *s);
+char    *get_pattern(char *str, int idx);
+void    add_first_filename(t_expand *params, char *match, int match_len);
+void    add_match(t_expand *params, t_wildcard *specs);
 #endif
