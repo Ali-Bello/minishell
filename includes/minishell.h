@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.h                                            :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/13 03:20:20 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/13 03:20:20 by marvin           ###   ########.fr       */
+/*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
+/*   Updated: 2024/08/18 01:04:30 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef MINISHELL_H
+#define MINISHELL_H
 
 #include <stdio.h>
 #include <string.h>
@@ -20,7 +20,9 @@
 #include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "../libft/libft.h"
 
+# define EXIT_STATUS 0
 # define RED "\x1b[31m"
 # define GREEN "\x1b[32m"
 # define BLUE "\x1b[34m"
@@ -42,16 +44,15 @@ typedef enum s_token
     AND,
     OR,
     PARENTHESIS,
-    WILDCARD,
     WORD
 } e_token;
 
-typedef struct s_list
+typedef struct s_lexer_list
 {
     char *s;
     e_token  type;
-    struct s_list *next;
-} t_list;
+    struct s_lexer_list *next;
+} t_lexer_list;
 
 typedef struct s_expand
 {
@@ -62,18 +63,31 @@ typedef struct s_expand
     int res_size;
 }   t_expand;
 
-t_list *new_node(char *s, int type);
-void add_node(t_list **node, t_list *new_node);
+typedef struct s_wildcard
+{
+    DIR *dir;
+    struct dirent *entry;
+    size_t  name_len;
+    bool    flag;
+    char    **fragments;
+    char    *pattern;
+}   t_wildcard;
+
+t_lexer_list *new_node(char *s, int type);
+void add_node(t_lexer_list **node, t_lexer_list *new_node);
 
 char *expand_and_remove_quotes(char *s);
-void    parse_operators(t_list **list, char *s, int *i);
-void    parse_words(t_list **list, char *s, int *i);
+void    parse_operators(t_lexer_list **list, char *s, int *i);
+void    parse_words(t_lexer_list **list, char *s, int *i);
 void    parse_quotes(char *s, int *i);
 void expand_wildcards(t_expand *params);
 char    *extend_string(t_expand *params);
 char	*ft_strjoin(char const *s1, char const *s2);
-t_list    *lexer(char *s);
+t_lexer_list    *lexer(char *s);
 void    *ft_memset(void *b, int c, size_t len);
 char *ft_strndup(char *str, int size);
 size_t	ft_strlen(const char *s);
+char	**ft_split(char const *s, char c);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+
 #endif

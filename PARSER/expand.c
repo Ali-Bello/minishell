@@ -6,11 +6,11 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/14 05:47:57 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/15 06:30:51 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../LEXER/lexer.h"
+#include "../includes/minishell.h"
 
 char    *get_varname(char *s, int *j)
 {
@@ -20,7 +20,7 @@ char    *get_varname(char *s, int *j)
     while (s[i] && !isspace(s[i]))
         i++;
     *j += i;
-    return (ft_strndup(s, i));
+    return (ft_substr(s, 0, i));
 }
 
 void    expand_exit_status(t_expand *params)
@@ -28,8 +28,8 @@ void    expand_exit_status(t_expand *params)
     char    *value;
     size_t   value_len;
 
-    // value = ft_itoa(EXIT_STATUS);
-    value_len = strlen(value);
+    value = ft_itoa(EXIT_STATUS);
+    value_len = ft_strlen(value);
     params->res = realloc(params->res, params->res_size + value_len + 1);
     if (!params->res)
         return;
@@ -51,7 +51,7 @@ void    expand_var(t_expand *params)
     //     expand_exit_status(params);
     //     return;
     // }
-    var_name = get_varname(&params->str[params->i + 1], &params->i); // Update *i to point to the end of var name
+    var_name = get_varname(&params->str[params->i + 1], &params->i);
     value = getenv(var_name);
     if (!value)
         value = "";
@@ -59,7 +59,7 @@ void    expand_var(t_expand *params)
     // Expand the result buffer
     params->res = realloc(params->res, params->res_size + value_len + 1);
     if (!params->res) 
-        return (free(var_name));// Handle allocation failure
+        return (free(var_name));
     strcpy(params->res + params->res_idx, value);
     params->res_idx += value_len;
     free(var_name);
