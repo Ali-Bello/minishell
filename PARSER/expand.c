@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/15 13:35:45 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/17 01:51:37 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,25 @@ void    expand_var(t_expand *params, int flag)
 void    set_quotes_flags(t_expand *params, int flags[])
 {
     if (params->str[params->i] == '\'' && !flags[0])
+    {
         flags[1] = !flags[1];
+        if (params->i > 0 && params->str[params->i - 1] == '\'')
+            params->res = append_value(params, "");
+    }
     else if (params->str[params->i] == '\'')
         params->res = extend_string(params);
-    if (params->str[params->i] == '\"' && !flags[1])
+    if (params->str[params->i] == '"' && !flags[1])
+    {
         flags[0] = !flags[0];
+        if (params->i > 0 && params->str[params->i - 1] == '"')
+            params->res = append_value(params, "");
+    }
     else if (params->str[params->i] == '"')
         params->res = extend_string(params);
     params->i++;
 }
 
-char *expand_and_remove_quotes(char *s)
+char *expand_rm_quotes(char *s)
 {
     t_expand params;
     int quotes_flags[2];

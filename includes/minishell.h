@@ -36,23 +36,47 @@
 
 typedef enum s_token
 {
-    PIPE,
-    HEREDOC,
-    APPEND,
+    WORD,
+    CMD,
     REDIRIN,
     REDIROUT,
-    AND,
-    OR,
+    APPEND,
+    HEREDOC,
+    PIPE,
     PARENTHESIS,
-    WORD
+    AND,
+    OR
 } e_token;
 
-typedef struct s_lexer_list
+typedef struct s_redir
+{
+    e_token mode;
+    char *file;
+    struct s_redir *next;
+} t_redir;
+
+typedef struct s_cmd
+{
+    char *cmd;
+    char **args;
+    t_redir *redirections;
+} t_cmd;
+
+typedef union
+{
+    t_cmd cmd;
+    struct s_tree *sub_tree;
+} u_token_data;
+
+typedef struct s_list
 {
     char *s;
     e_token  type;
-    struct s_lexer_list *next;
-} t_lexer_list;
+    u_token_data data;
+    struct s_list *sub_list;
+    struct s_list *prev;
+    struct s_list *next;
+} t_list;
 
 typedef struct s_expand
 {
@@ -75,24 +99,27 @@ typedef struct s_wildcard
     char    *current_dir;
 }   t_wildcard;
 
-t_lexer_list *new_node(char *s, int type);
-void add_node(t_lexer_list **node, t_lexer_list *new_node);
+typedef struct s_tree
+{
+    e_token type;
+    u_token_data data;
+    struct s_tree *parent;
+    struct s_tree *left;
+    struct s_tree *right;
+} t_tree;
 
-char *expand_and_remove_quotes(char *s);
-void    parse_operators(t_lexer_list **list, char *s, int *i);
-void    parse_words(t_lexer_list **list, char *s, int *i);
+t_list *new_node(char *s, int type);
+void add_node(t_list **node, t_list *new_node);
+
+char    *expand_rm_quotes(char *s);
+void    parse_operators(t_list **list, char *s, int *i);
+void    parse_words(t_list **list, char *s, int *i);
 void    parse_quotes(char *s, int *i);
-void expand_wildcards(t_expand *params, int quotes, int dquotes);
+void    expand_wildcards(t_expand *params, int quotes, int dquotes);
 char    *extend_string(t_expand *params);
-char	*ft_strjoin(char const *s1, char const *s2);
-t_lexer_list    *lexer(char *s);
-void    *ft_memset(void *b, int c, size_t len);
-char *ft_strndup(char *str, int size);
-size_t	ft_strlen(const char *s);
-char	**ft_split(char const *s, char c);
-void	*ft_memcpy(void *dst, const void *src, size_t n);
-int ft_isspace(char c);
-int is_operator(char c);
+t_list    *lexer(char *s);
+int     ft_isspace(char c);
+int     is_operator(char c);
 char    *append_value(t_expand *params, char *value);
 
 void    recursive_match(t_expand *params, t_wildcard *specs);
@@ -101,4 +128,6 @@ void    construct_path(t_wildcard *specs, char *s);
 char    *get_pattern(char *str, int idx);
 void    add_first_filename(t_expand *params, char *match, int match_len);
 void    add_match(t_expand *params, t_wildcard *specs);
+
+t_tree  *convert_to_tree(t_list *list);
 #endif

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 03:13:26 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/15 07:17:22 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/17 07:58:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void    parse_quotes(char *s, int *i)
     *i += j;
 }
 
-void	parse_parenthesis(t_lexer_list **list, char *s, int *i)
+void	parse_parenthesis(t_list **list, char *s, int *i)
 {
 	int	j;
 
@@ -40,7 +40,7 @@ void	parse_parenthesis(t_lexer_list **list, char *s, int *i)
 	*i += j;
 }
 
-void    parse_words(t_lexer_list **list, char *s, int *i)
+void    parse_words(t_list **list, char *s, int *i)
 {
     int j;
 
@@ -58,7 +58,7 @@ void    parse_words(t_lexer_list **list, char *s, int *i)
     *i += j;
 }
 
-void    parse_operators(t_lexer_list **list, char *s, int *i)
+void    parse_operators(t_list **list, char *s, int *i)
 {
     int token;
 
@@ -86,11 +86,11 @@ void    parse_operators(t_lexer_list **list, char *s, int *i)
     || token == OR || token == AND);
 }
 
-t_lexer_list    *lexer(char *s)
+t_list    *lexer(char *s)
 {
     int i;
 	char	*tmp;
-    t_lexer_list *list;
+    t_list *list;
 
     i = 0;
     list  = NULL;

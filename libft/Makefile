@@ -10,13 +10,8 @@ SRCS = ft_putnbr_fd.c ft_putendl_fd.c ft_putstr_fd.c ft_putchar_fd.c \
     ft_memmove.c ft_memcpy.c ft_bzero.c ft_memset.c ft_strlen.c \
     ft_isprint.c ft_isascii.c ft_isalnum.c ft_isdigit.c ft_isalpha.c \
 
-BSRCS = ft_lstmap_bonus.c ft_lstiter_bonus.c ft_lstclear_bonus.c \
-    ft_lstdelone_bonus.c ft_lstadd_back_bonus.c ft_lstlast_bonus.c \
-    ft_lstsize_bonus.c ft_lstadd_front_bonus.c ft_lstnew_bonus.c \
-
 OBJS_DIR = libft_objs
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:.c=.o))
-BOBJS = $(addprefix $(OBJS_DIR)/, $(BSRCS:.c=.o))
 
 ERASE := \033[2K
 CYAN := \033[36m
@@ -48,6 +43,5 @@ fclean: clean
 
 re: fclean all
 
-bonus: $(BOBJS)
 
 .PHONY: all clean fclean re bonus
