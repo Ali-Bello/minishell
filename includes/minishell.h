@@ -89,45 +89,45 @@ typedef struct s_expand
 
 typedef struct s_wildcard
 {
-    DIR *dir;
-    struct dirent *entry;
-    size_t  name_len;
-    int recursive_flag;
-    bool    flag;
-    char    **fragments;
-    char    *pattern;
-    char    *current_dir;
+    DIR             *dir;
+    struct dirent   *entry;
+    size_t          name_len;
+    bool            flag;
+    char            **fragments;
+    char            *pattern;
+    char            *current_dir;
 }   t_wildcard;
 
 typedef struct s_tree
 {
-    e_token type;
-    u_token_data data;
-    struct s_tree *parent;
-    struct s_tree *left;
-    struct s_tree *right;
+    e_token         type;
+    u_token_data    data;
+    struct s_tree   *parent;
+    struct s_tree   *left;
+    struct s_tree   *right;
 } t_tree;
 
-t_list *new_node(char *s, int type);
-void add_node(t_list **node, t_list *new_node);
+t_list  *new_node(char *s, int type);
+void    add_node(t_list **node, t_list *new_node);
 
-char    *expand_rm_quotes(char *s);
+char    *expand_rm_quotes(t_list *node, char *s);
+void    append_words(t_list *node, t_expand *params, char *value);
 void    parse_operators(t_list **list, char *s, int *i);
 void    parse_words(t_list **list, char *s, int *i);
 void    parse_quotes(char *s, int *i);
-void    expand_wildcards(t_expand *params, int quotes, int dquotes);
+void    expand_wildcards(t_expand *params, int squotes, int dquotes);
 char    *extend_string(t_expand *params);
-t_list    *lexer(char *s);
+t_list  *lexer(char *s);
 int     ft_isspace(char c);
 int     is_operator(char c);
 char    *append_value(t_expand *params, char *value);
 
 void    recursive_match(t_expand *params, t_wildcard *specs);
-int    empty_space(char *s, int idx);
+int     empty_space(char *s, int idx);
 void    construct_path(t_wildcard *specs, char *s);
 char    *get_pattern(char *str, int idx);
 void    add_first_filename(t_expand *params, char *match, int match_len);
 void    add_match(t_expand *params, t_wildcard *specs);
 
-t_tree  *convert_to_tree(t_list *list);
+t_tree *convert_to_ast(t_list *list);
 #endif

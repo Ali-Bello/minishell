@@ -12,19 +12,41 @@
 
 #include "../includes/minishell.h"
 
-bool    match_wildcards(char *filename, char **fragments)
+char    *get_pattern(char *str, int idx)
+{
+    int i;
+    int len;
+    char *s;
+
+    i = idx;
+    s = NULL;
+    while (i >= 0 && !ft_isspace(str[i]))
+        i--;
+    len = idx;
+    while (str[len] && !ft_isspace(str[len]))
+        len++;
+    if (i > 1 || len > 1)
+        s = ft_substr(str, i + 1, len);
+    return (s);
+}
+
+bool    match_found(char *filename, char **fragments)
 {
     int i;
     char *pos;
 
     i = 0;
     pos = filename;
-    if (!fragments[i])
-        return false;
     while (fragments[i])
     {
-        pos = ft_strnstr(pos, fragments[i], ft_strlen(pos));
-        if (!pos) 
+        if (i == 0)
+            pos = ft_strnstr(pos, fragments[i], ft_strlen(fragments[0]));
+        else if (!fragments[i + 1])
+            pos = ft_strnstr(&filename[ft_strlen(filename) - \
+            ft_strlen(fragments[i])], fragments[i], ft_strlen(fragments[i]));
+        else
+            pos = ft_strnstr(pos, fragments[i], ft_strlen(pos));
+        if (!pos)
             return false;
         pos += ft_strlen(fragments[i]);
         i++;
@@ -34,9 +56,6 @@ bool    match_wildcards(char *filename, char **fragments)
 
 void    match_patterns(t_expand *params, t_wildcard *specs)
 {
-    specs->fragments = ft_split(specs->pattern, '*');
-    if (specs->fragments)
-        specs->fragments[0] += ft_strlen(specs->current_dir) - 1;
     while ((specs->entry = readdir(specs->dir)))
     {
         if (specs->entry->d_name[0] == '.')
@@ -44,51 +63,43 @@ void    match_patterns(t_expand *params, t_wildcard *specs)
         specs->name_len = ft_strlen(specs->entry->d_name);
         if (!specs->fragments)
             add_match(params, specs);
-        else if (specs->entry->d_type == DT_DIR\
-        && specs->fragments && !ft_strncmp(specs->entry->d_name,\
-        specs->fragments[0], specs->name_len))
-            recursive_match(params, specs);
-        else if (match_wildcards(specs->entry->d_name, specs->fragments))
+        else if (match_found(specs->entry->d_name, specs->fragments))
             add_match(params, specs);
-    }
-}
-
-void    recursive_match(t_expand *params, t_wildcard *specs)
-{
-    DIR *subdir;
-    t_wildcard sub_specs;
-    char subdir_path[254];
-
-    construct_path(specs, subdir_path);
-    subdir = opendir(subdir_path);
-    if (subdir)
-    {
-        specs->recursive_flag = 1;
-        sub_specs = *specs;
-        sub_specs.dir = subdir;
-        sub_specs.current_dir = subdir_path;
-        match_patterns(params, &sub_specs);
-        closedir(subdir);
     }
 }
 
 void   fetsh_files(t_expand *params, t_wildcard *specs)
 {
-    specs->current_dir = ".";
-    specs->dir = opendir(".");
+    char *dir_name;
+    char  *tmp;
+
+    specs->current_dir = "./";
+    dir_name = NULL;
+    specs->fragments = ft_split(specs->pattern, '*');
+    if (specs->fragments && (tmp = ft_strrchr(specs->fragments[0], '/')))
+    {
+        dir_name = ft_substr(specs->fragments[0], 0, \
+        tmp - specs->fragments[0]);
+        tmp = ft_strdup(tmp + 1);
+        free(specs->fragments[0]);
+        specs->fragments[0] = tmp;
+    }
+    specs->current_dir = ft_strjoin(specs->current_dir, dir_name);
+    specs->dir = opendir(specs->current_dir);
     if (!specs->dir)
         return;
     match_patterns(params, specs);
     closedir(specs->dir);
-    free(specs->fragments);
+    free(dir_name);
+    return ;
 }
 
-void expand_wildcards(t_expand *params, int quotes, int dquotes)
+void expand_wildcards(t_expand *params, int squotes, int dquotes)
 {
     t_wildcard  specs;
 
     ft_memset(&specs, 0, sizeof(t_wildcard));
-    if (quotes || dquotes)
+    if (squotes || dquotes)
     {
         params->res = extend_string(params);
         params->i++;
@@ -96,7 +107,7 @@ void expand_wildcards(t_expand *params, int quotes, int dquotes)
     }
     specs.pattern = get_pattern(params->str, params->i);
     fetsh_files(params, &specs);
-    if (specs.flag || specs.recursive_flag)
+    if (specs.flag)
     {
         while(params->str[params->i] && !ft_isspace(params->str[params->i]))
             params->i++;

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/10/19 11:10:30 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/23 07:45:31 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_list    *get_args(t_list *list, u_token_data *data)
     i = 0;
     while (list && list->type == WORD)
     {
-        list->s = expand_rm_quotes(list->s);
+        list->s = expand_rm_quotes(list, list->s);
         tmp = list;
         data->cmd.args[i] = ft_strdup(list->s);
         list = list->next;
@@ -51,7 +51,7 @@ void    merge_nodes(t_list *list, t_redir *redirs)
 {
     int size;
 
-    list->s = expand_rm_quotes(list->s);
+    list->s = expand_rm_quotes(list, list->s);
     size = get_args_count(list);
     list->data.cmd.args = malloc(sizeof(char *) * (size));
     list->data.cmd.redirections = redirs;
@@ -137,7 +137,7 @@ void    parser(t_list *list)
         }
         else if (tmp && tmp->type == PARENTHESIS)
         {
-            tmp->sub_list = lexer(&tmp->s[1]);
+            tmp->sub_list = lexer(tmp->s);
             parser(tmp->sub_list);
         }
         else if (tmp->type == PIPE || tmp->type == AND || tmp->type == OR)
@@ -157,10 +157,8 @@ void    print_list(t_list *list)
         for (int i = 0; tmp->data.cmd.args && tmp->data.cmd.args[i]; i++)
             printf("       data -> cmd.args = [%s]\n", tmp->data.cmd.args[i]);
         for (t_redir *tmp2 = tmp->data.cmd.redirections; tmp2; tmp2 = tmp2->next)
-        {
             printf("       data -> cmd.redirections = {mode = [%d], file = [%s]\n",\
             tmp2->mode, tmp2->file);
-        }
         if (tmp->sub_list)
         {
             printf(GREEN"---SUB_list\n"RESET);
@@ -170,11 +168,87 @@ void    print_list(t_list *list)
     }
 }
 
+void print_ast(t_tree *node, int level)
+{
+    if (!node) return;
+
+    // Print indentation based on the level of the node in the tree
+    for (int i = 0; i < level; i++) {
+        printf("    ");
+    }
+
+    // Print node type
+    switch (node->type) {
+        case CMD:
+            printf("CMD: %s", node->data.cmd.cmd);
+            if (node->data.cmd.args)
+            {
+                printf(" args: ");
+                for (int i = 0; node->data.cmd.args[i]; i++)
+                    printf("%s ", node->data.cmd.args[i]);
+            }
+            if (node->data.cmd.redirections) {
+                for (t_redir *tmp2 = node->data.cmd.redirections; tmp2; tmp2 = tmp2->next)
+                    printf(" redirections = {mode = [%d], file = [%s]\n",\
+                    tmp2->mode, tmp2->file);
+            }
+            printf("\n");
+            break;
+        
+        case PIPE:
+            printf("PIPE\n");
+            break;
+
+        case AND:
+            printf("AND\n");
+            break;
+
+        case OR:
+            printf("OR\n");
+            break;
+
+        case PARENTHESIS:
+            printf("PARENTHESIS\n");
+            printf("SUB tree inside parentheses:\n");
+            // Print the sub-tree inside the parentheses
+            print_ast(node->data.sub_tree, level + 1);
+            printf("END OF SUB tree inside parentheses:\n");
+            return;
+
+        default:
+            printf("Unknown node type\n");
+    }
+
+    // Recursively print left and right children
+    if (node->left) {
+        printf(GREEN"  left level = %d\n"RESET, level);
+        print_ast(node->left, level + 1);
+    }
+    if (node->right) {
+        printf(GREEN"  right level = %d\n"RESET, level);
+        print_ast(node->right, level + 1);
+    }
+}
+
 int main()
 {
     char    *buf = readline(BLUE"$$:"RESET);
-    t_list *list = lexer(buf);
+    t_list *list;
+    list = lexer(buf);
     parser(list);
-    print_list(list);
+    for (t_list *tmp = list; tmp; tmp = tmp->next)
+    {
+        if (tmp->next && (tmp->next->type == REDIRIN || tmp->next->type == REDIROUT
+        || tmp->next->type == APPEND || tmp->next->type == HEREDOC))
+        {
+            t_list *tmp2 = tmp->next->next;
+            free(tmp->next->s);
+            free(tmp->next);
+            tmp->next = tmp2;
+        }
+    }
+    // print_list(list);
+    t_tree *root = convert_to_ast(list);
+    print_ast(root, 0);
     return (0);
 }

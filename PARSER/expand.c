@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/17 01:51:37 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/23 06:36:25 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@ void    expand_exit_status(t_expand *params)
     params->i += 2;
 }
 
-void    expand_var(t_expand *params, int flag)
+void    expand_var(t_expand *params, int flags[], t_list *node)
 {
     char *var_name;
     char *value;
 
-    if (flag)
+
+    if (flags[1] || !params->str[params->i + 1])
     {
         params->res = extend_string(params);
         params->i++;
@@ -53,7 +54,10 @@ void    expand_var(t_expand *params, int flag)
     }
     var_name = get_varname(&params->str[params->i + 1], &params->i);
     value = getenv(var_name);
-    params->res = append_value(params, value);
+    if (!flags[0])
+        append_words(node, params, value);
+    else 
+        params->res = append_value(params, value);
     if (!params->res)
         return (free(var_name));
     free(var_name);
@@ -80,7 +84,7 @@ void    set_quotes_flags(t_expand *params, int flags[])
     params->i++;
 }
 
-char *expand_rm_quotes(char *s)
+char *expand_rm_quotes(t_list *node, char *s)
 {
     t_expand params;
     int quotes_flags[2];
@@ -90,7 +94,7 @@ char *expand_rm_quotes(char *s)
     params.str = s;
     while (s[params.i])
     {
-        if (s[params.i] != '\'' && s[params.i] != '"'
+        if (s[params.i] != '\'' && s[params.i] != '"'\
         && s[params.i] != '$' && s[params.i] != '*')
         {
             params.res = extend_string(&params);
@@ -101,7 +105,7 @@ char *expand_rm_quotes(char *s)
         else if (s[params.i] == '\'' || s[params.i] == '"')
             set_quotes_flags(&params, quotes_flags);
         else if (s[params.i] == '$')
-            expand_var(&params, quotes_flags[1]);
+            expand_var(&params, quotes_flags, node);
         else if (s[params.i] == '*')
             expand_wildcards(&params, quotes_flags[1], quotes_flags[0]);
     }

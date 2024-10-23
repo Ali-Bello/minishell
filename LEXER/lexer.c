@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 03:13:26 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/17 07:58:19 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/23 07:31:10 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,8 @@ void	parse_parenthesis(t_list **list, char *s, int *i)
 	j = 0;
 	while (s[j] && s[j] != ')')
 		j++;
-    
-	add_node(list, new_node(ft_substr(s, 0, j + 1), PARENTHESIS));
-	*i += j;
+	add_node(list, new_node(ft_substr(&s[1], 0, j - 1), PARENTHESIS));
+    *i += j;
 }
 
 void    parse_words(t_list **list, char *s, int *i)
@@ -49,6 +48,8 @@ void    parse_words(t_list **list, char *s, int *i)
     j = 0;
     while (s[j] && !ft_isspace(s[j]) && !is_operator(s[j]))
     {
+        if (s[j] == '&' && s[j + 1] && s[j + 1] == '&')
+            break;
         if (s[j] == '"' || s[j] == '\'')
             parse_quotes(&s[j], &j);
         j++;
@@ -63,22 +64,18 @@ void    parse_operators(t_list **list, char *s, int *i)
     int token;
 
     if (s[0] == '>')
-    {
         token = APPEND * (s[1] && s[1] == '>')\
             + REDIROUT * (!s[1] || s[1] != '>');
-    }
     else if (s[0] == '<')
-    {
         token = HEREDOC * (s[1] && s[1] == '<')\
             + REDIRIN * (!s[1] || s[1] != '<');
-    }
     else if (s[0] == '|')
-    {
         token = OR * (s[1] && s[1] == '|')\
             +  PIPE * (!s[1] || s[1] != '|');
-    }
     else if  (s[0] == '&' && s[1] &&  s[1] == '&')
         token = AND;
+    else if (!s[1] || s[1] != '&')
+        return;
     add_node(list, new_node(ft_substr(s, 0, 1 +\
     + (token == HEREDOC || token == APPEND || token == OR\
 	|| token == AND)), token));
@@ -97,7 +94,7 @@ t_list    *lexer(char *s)
 	tmp = ft_substr(s, 0, ft_strlen(s));
     while (tmp && tmp[i])
     {
-        if (!ft_isspace(tmp[i]))
+        if (!ft_isspace(tmp[i]) && tmp[i] != '(')
             parse_words(&list, &tmp[i], &i);
 		if (tmp[i] == '(')
 			parse_parenthesis(&list, &tmp[i], &i);

@@ -46,3 +46,30 @@ char    *append_value(t_expand *params, char *value)
     free(params->res);
     return (str);
 }
+
+void    append_words(t_list *node, t_expand *params, char *value)
+{
+    t_list  *tmp;
+    char    **s;
+    int       i;
+
+    i = 0;
+    s = ft_split(value, ' ');
+    if (!s)
+    {
+        append_value(params, value);
+        return ;
+    }
+    while (s[i])
+    {
+        if (i == 0)
+            params->res = append_value(params, s[i]);
+        else
+        {
+            tmp = node->next;
+            node->next = new_node(s[i], WORD);
+            node->next->next = tmp;
+        }
+        i++;
+    }
+}
