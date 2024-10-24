@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/23 06:36:25 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/24 08:25:18 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,12 @@ void    expand_exit_status(t_expand *params)
     params->i += 2;
 }
 
-void    expand_var(t_expand *params, int flags[], t_list *node)
+void    expand_var(t_expand *params, t_list *node)
 {
     char *var_name;
     char *value;
 
-
-    if (flags[1] || !params->str[params->i + 1])
+    if (params->quotes_flags[1] || !params->str[params->i + 1])
     {
         params->res = extend_string(params);
         params->i++;
@@ -54,28 +53,26 @@ void    expand_var(t_expand *params, int flags[], t_list *node)
     }
     var_name = get_varname(&params->str[params->i + 1], &params->i);
     value = getenv(var_name);
-    if (!flags[0])
+    if (!params->quotes_flags[0] && value)
         append_words(node, params, value);
-    else 
+    else if (value)
         params->res = append_value(params, value);
-    if (!params->res)
-        return (free(var_name));
     free(var_name);
 }
 
-void    set_quotes_flags(t_expand *params, int flags[])
+void    set_quotes_flags(t_expand *params)
 {
-    if (params->str[params->i] == '\'' && !flags[0])
+    if (params->str[params->i] == '\'' && !params->quotes_flags[0])
     {
-        flags[1] = !flags[1];
+        params->quotes_flags[1] = !params->quotes_flags[1];
         if (params->i > 0 && params->str[params->i - 1] == '\'')
             params->res = append_value(params, "");
     }
     else if (params->str[params->i] == '\'')
         params->res = extend_string(params);
-    if (params->str[params->i] == '"' && !flags[1])
+    if (params->str[params->i] == '"' && !params->quotes_flags[1])
     {
-        flags[0] = !flags[0];
+        params->quotes_flags[0] = !params->quotes_flags[0];
         if (params->i > 0 && params->str[params->i - 1] == '"')
             params->res = append_value(params, "");
     }
@@ -87,10 +84,10 @@ void    set_quotes_flags(t_expand *params, int flags[])
 char *expand_rm_quotes(t_list *node, char *s)
 {
     t_expand params;
-    int quotes_flags[2];
 
+    if (node->expand_flag)
+        return (s);
     ft_bzero(&params, sizeof(t_expand));
-    ft_bzero(&quotes_flags, sizeof(quotes_flags));
     params.str = s;
     while (s[params.i])
     {
@@ -103,11 +100,11 @@ char *expand_rm_quotes(t_list *node, char *s)
             params.i++;
         }
         else if (s[params.i] == '\'' || s[params.i] == '"')
-            set_quotes_flags(&params, quotes_flags);
+            set_quotes_flags(&params);
         else if (s[params.i] == '$')
-            expand_var(&params, quotes_flags, node);
+            expand_var(&params, node);
         else if (s[params.i] == '*')
-            expand_wildcards(&params, quotes_flags[1], quotes_flags[0]);
+            expand_wildcards(&params);
     }
     free(s);
     return (params.res);

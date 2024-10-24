@@ -94,12 +94,12 @@ void   fetsh_files(t_expand *params, t_wildcard *specs)
     return ;
 }
 
-void expand_wildcards(t_expand *params, int squotes, int dquotes)
+void expand_wildcards(t_expand *params)
 {
     t_wildcard  specs;
 
     ft_memset(&specs, 0, sizeof(t_wildcard));
-    if (squotes || dquotes)
+    if (params->quotes_flags[0] || params->quotes_flags[1])
     {
         params->res = extend_string(params);
         params->i++;

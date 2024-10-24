@@ -6,103 +6,140 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 07:54:21 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/23 07:17:20 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/24 10:44:56 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_tree  *create_tree_node(e_token type, u_token_data data)
+/*
+ * stats array[]:
+ * 0 : root of the tree
+ * 1 : current command
+ * 2 : last operator
+ * 3 : last pipe
+ * 4 : tmp to store new_nodes
+ */
+
+# define ROOT stats[0]
+# define CURRENT_CMD stats[1]
+# define LAST_OP stats[2]
+# define LAST_PIPE stats[3]
+# define TMP stats[4]
+
+t_tree  *new_tree_node(e_token type, t_cmd data)
 {
-    t_tree *node = (t_tree *)malloc(sizeof(t_tree));
-    if (!node) return NULL;
+    t_tree *node;
+
+    node = (t_tree *)malloc(sizeof(t_tree));
+    if (!node)
+        return (NULL);
     node->type = type;
     node->data = data;
+    if (data.cmd && !*data.cmd)
+    {
+        free(node->data.cmd);
+        node->data.cmd = NULL;
+    }
+    node->sub_tree = NULL;
     node->left = NULL;
     node->right = NULL;
     return node;
 }
 
+void    insert_pipe(t_cmd data, t_tree *stats[])
+{
+    TMP = new_tree_node(PIPE, data);
+    if (!ROOT)
+    {
+        TMP->left = CURRENT_CMD;
+        ROOT = TMP;
+    }
+    else if (LAST_OP)
+    {
+        LAST_OP->right = CURRENT_CMD;
+        TMP->left = ROOT;
+        ROOT = TMP;
+        LAST_OP = NULL;
+    }
+    else
+    {
+        if (LAST_PIPE)
+            LAST_PIPE->right = CURRENT_CMD;
+        else
+            ROOT->right = CURRENT_CMD;
+        TMP->left = ROOT;
+        ROOT = TMP;
+    }
+    LAST_PIPE = TMP;
+    CURRENT_CMD = NULL;
+}
+
+void    insert_logical_op(t_list *node, t_tree *stats[])
+{
+    TMP = new_tree_node(node->type, node->data);
+    if (!ROOT)
+    {
+        TMP->left = CURRENT_CMD;
+        ROOT = TMP;
+    }
+    else if (LAST_PIPE)
+    {
+        LAST_PIPE->right = CURRENT_CMD;
+        TMP->left = ROOT;
+    }
+    else if (LAST_OP)
+    {
+        LAST_OP->right = CURRENT_CMD;
+        TMP->left = ROOT;
+    }
+    else
+    {
+        ROOT->right = CURRENT_CMD;
+        TMP->left = ROOT;
+    }
+    if (ROOT)
+        ROOT = TMP;
+    LAST_OP = TMP;
+    CURRENT_CMD = NULL;
+}
+
+t_tree  *set_root_node(t_tree *stats[])
+{
+    if (CURRENT_CMD && LAST_OP)
+        LAST_OP->right = CURRENT_CMD;
+    else if (CURRENT_CMD && ROOT)
+    {
+        if (LAST_PIPE)
+            LAST_PIPE->right = CURRENT_CMD;
+        else
+            ROOT->right = CURRENT_CMD;
+    }
+    else if (CURRENT_CMD && !ROOT)
+        ROOT = CURRENT_CMD;
+    return (ROOT);
+}
+
 t_tree *convert_to_ast(t_list *list)
 {
-    t_tree *root = NULL;      // Root of the tree
-    t_tree *current_cmd = NULL;  // Tracks the current command being processed
-    t_tree *last_operator = NULL;  // Tracks the last logical operator node
-    t_tree *last_pipe = NULL;  // Tracks the last pipe node
+    t_tree  *stats[5];
 
-    while (list) {
-        if (list->type == CMD) {
-            // Create a command node
-            t_tree *cmd_node = create_tree_node(CMD, list->data);
-            current_cmd = cmd_node;
-        } 
-        else if (list->type == PIPE) {
-            // Handle PIPE similar to previous function
-            t_tree *pipe_node = create_tree_node(PIPE, list->data);
-
-            if (!root) {
-                pipe_node->left = current_cmd;
-                root = pipe_node;
-            } else if (last_pipe) {
-                last_pipe->right = current_cmd;
-                pipe_node->left = root;
-                root = pipe_node;
-            }
-
-            last_pipe = pipe_node;  // Update last pipe
-            current_cmd = NULL;  // Reset current command
-        } 
-        else if (list->type == AND || list->type == OR) {
-            // Handle AND and OR logical operators
-            t_tree *op_node = create_tree_node(list->type, list->data);
-
-            if (!root) {
-                // If this is the first operator, set root
-                op_node->left = current_cmd;
-                root = op_node;
-            } else if (last_operator) {
-                // Attach the last logical operation to the right of previous one
-                last_operator->right = current_cmd;
-                op_node->left = root;
-                root = op_node;
-            } else {
-                // Attach current command to the left of the logical operator
-                op_node->left = current_cmd;
-                root = op_node;
-            }
-
-            last_operator = op_node;  // Update last operator
-            current_cmd = NULL;  // Reset current command
-        } 
+    ft_bzero(stats, sizeof(stats));
+    while (list && list->s)
+    {
+        if (list->type == CMD)
+            CURRENT_CMD = new_tree_node(CMD, list->data);
+        else if (list->type == PIPE)
+            insert_pipe(list->data, stats);
+        else if (list->type == AND || list->type == OR)
+            insert_logical_op(list, stats);
         else if (list->type == PARENTHESIS)
         {
-            // Handle parentheses by creating a subtree
-            t_tree *subtree = convert_to_ast(list->sub_list);  // Recursively process the sub-list inside parentheses
-
-            if (!current_cmd)
-            {
-                current_cmd = create_tree_node(PARENTHESIS, list->data);
-                current_cmd->data.sub_tree = subtree;
-            }
-            else
-            {
-                // Nested parentheses, attach as subtree
-                t_tree *paren_node = create_tree_node(PARENTHESIS, list->data);
-                paren_node->data.sub_tree = subtree;
-                current_cmd = paren_node;
-            }
+            TMP = new_tree_node(PARENTHESIS, list->data);
+            TMP->sub_tree = convert_to_ast(list->sub_list);
+            CURRENT_CMD = TMP;
         }
-        list = list->next;  // Move to the next token
+        list = list->next;
     }
-
-    // Attach the final command or node
-    if (current_cmd && last_operator) {
-        last_operator->right = current_cmd;  // Attach the last command to the last operator
-    } else if (current_cmd && root) {
-        root->right = current_cmd;  // Attach the last command to the root
-    } else if (current_cmd && !root) {
-        root = current_cmd;  // Set final command as root if no operators
-    }
-
-    return root;
+    return (set_root_node(stats));
 }

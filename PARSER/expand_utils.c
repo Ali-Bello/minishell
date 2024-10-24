@@ -55,12 +55,7 @@ void    append_words(t_list *node, t_expand *params, char *value)
 
     i = 0;
     s = ft_split(value, ' ');
-    if (!s)
-    {
-        append_value(params, value);
-        return ;
-    }
-    while (s[i])
+    while (s && s[i])
     {
         if (i == 0)
             params->res = append_value(params, s[i]);
@@ -68,7 +63,10 @@ void    append_words(t_list *node, t_expand *params, char *value)
         {
             tmp = node->next;
             node->next = new_node(s[i], WORD);
+            if (ft_strchr(s[i], '\'') || ft_strchr(s[i], '"'))
+                node->next->expand_flag = 1;
             node->next->next = tmp;
+            node = node->next;
         }
         i++;
     }

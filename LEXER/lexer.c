@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 03:13:26 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/23 07:31:10 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/23 21:22:50 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,24 @@ void    parse_quotes(char *s, int *i)
 void	parse_parenthesis(t_list **list, char *s, int *i)
 {
 	int	j;
+    int flag;
 
 	if (!s)
 		return ;
 	j = 0;
-	while (s[j] && s[j] != ')')
+    flag = 0;
+	while (s[j])
+    {
+        if (s[j] == '(')
+            flag++;
+        else if (s[j] == ')')
+            flag--;
+        if (!flag)
+            break;
 		j++;
-	add_node(list, new_node(ft_substr(&s[1], 0, j - 1), PARENTHESIS));
-    *i += j;
+    }
+    add_node(list, new_node(ft_substr(&s[1], 0, j - 1), PARENTHESIS));
+    *i += j + 1;
 }
 
 void    parse_words(t_list **list, char *s, int *i)

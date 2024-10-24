@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/10/23 07:45:31 by marvin           ###   ########.fr       */
+/*   Updated: 2024/10/24 10:43:20 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,32 @@ int get_args_count(t_list *list)
     tmp = list;
     while (tmp && tmp->type == WORD)
     {
-        i++;
+        if (tmp->s)
+            i++;
         tmp = tmp->next;
     }
     return (i);
 }
 
-t_list    *get_args(t_list *list, u_token_data *data)
+t_list    *get_args(t_list *list, t_cmd *data)
 {
     int i;
     t_list *tmp;
 
-    i = 0;
+    i = 1;
     while (list && list->type == WORD)
     {
         list->s = expand_rm_quotes(list, list->s);
+        if (list->s && data->args)
+        {
+            data->args[i] = ft_strdup(list->s);
+            i++;
+        }
         tmp = list;
-        data->cmd.args[i] = ft_strdup(list->s);
         list = list->next;
         free(tmp->s);
         free(tmp);
-        i++;
     }
-    data->cmd.args[i] = NULL;
     return (list);
 }
 
@@ -53,16 +56,21 @@ void    merge_nodes(t_list *list, t_redir *redirs)
 
     list->s = expand_rm_quotes(list, list->s);
     size = get_args_count(list);
-    list->data.cmd.args = malloc(sizeof(char *) * (size));
-    list->data.cmd.redirections = redirs;
-    if (!list->data.cmd.args)
-        return ;
-    list->data.cmd.cmd = ft_strdup(list->s);
-    if (!list->data.cmd.cmd)
+    if (size)
     {
-        free(list->data.cmd.args);
-        return ;   
+        list->data.args = malloc(sizeof(char *) * (size + 1));
+        if (!list->data.args)
+            return ;
+        list->data.args[size] = NULL;
     }
+    if (list->s && size)
+    {
+        list->data.args[0] = ft_strdup(list->s);
+        list->data.cmd = ft_strdup(list->s);
+        if (!list->data.cmd)
+            return ;
+    }
+    list->data.redirections = redirs;
     list->type = CMD;
     list->next = get_args(list->next, &list->data);
 }
@@ -72,14 +80,14 @@ t_list *add_redir_node(t_redir **redirections, t_list *list)
     t_redir *new;
     t_list *tmp;
 
-    new = malloc(sizeof(t_redir));
-    if (!new)
-        return (NULL);
-    new->mode = list->type;
     tmp = NULL;
-    new->next = NULL;
     if (list->next && list->next->type == WORD)
     {
+        new = malloc(sizeof(t_redir));
+        if (!new)
+            return (NULL);
+        new->mode = list->type;
+        new->next = NULL;
         tmp = list->next->next;
         new->file = ft_strdup(list->next->s);
         free(list->next->s);
@@ -152,11 +160,11 @@ void    print_list(t_list *list)
     for (t_list *tmp = list; tmp; tmp = tmp->next)
     {
         printf("node -> {type = [%d], s = [%s]}\n", tmp->type, tmp->s);
-        if (tmp->data.cmd.cmd)
-            printf("       data -> cmd = [%s]\n", tmp->data.cmd.cmd);
-        for (int i = 0; tmp->data.cmd.args && tmp->data.cmd.args[i]; i++)
-            printf("       data -> cmd.args = [%s]\n", tmp->data.cmd.args[i]);
-        for (t_redir *tmp2 = tmp->data.cmd.redirections; tmp2; tmp2 = tmp2->next)
+        if (tmp->data.cmd)
+            printf("       data -> cmd = [%s]\n", tmp->data.cmd);
+        for (int i = 0; tmp->data.args && tmp->data.args[i]; i++)
+            printf("       data -> cmd.args = [%s]\n", tmp->data.args[i]);
+        for (t_redir *tmp2 = tmp->data.redirections; tmp2; tmp2 = tmp2->next)
             printf("       data -> cmd.redirections = {mode = [%d], file = [%s]\n",\
             tmp2->mode, tmp2->file);
         if (tmp->sub_list)
@@ -176,19 +184,18 @@ void print_ast(t_tree *node, int level)
     for (int i = 0; i < level; i++) {
         printf("    ");
     }
-
-    // Print node type
-    switch (node->type) {
+    switch (node->type)
+    {
         case CMD:
-            printf("CMD: %s", node->data.cmd.cmd);
-            if (node->data.cmd.args)
+            printf("CMD: %s", node->data.cmd);
+            if (node->data.args)
             {
                 printf(" args: ");
-                for (int i = 0; node->data.cmd.args[i]; i++)
-                    printf("%s ", node->data.cmd.args[i]);
+                for (int i = 0; node->data.args[i]; i++)
+                    printf("[%s] ", node->data.args[i]);
             }
-            if (node->data.cmd.redirections) {
-                for (t_redir *tmp2 = node->data.cmd.redirections; tmp2; tmp2 = tmp2->next)
+            if (node->data.redirections) {
+                for (t_redir *tmp2 = node->data.redirections; tmp2; tmp2 = tmp2->next)
                     printf(" redirections = {mode = [%d], file = [%s]\n",\
                     tmp2->mode, tmp2->file);
             }
@@ -209,9 +216,9 @@ void print_ast(t_tree *node, int level)
 
         case PARENTHESIS:
             printf("PARENTHESIS\n");
-            printf("SUB tree inside parentheses:\n");
+            printf("SUB tree inside parentheses: \n");
             // Print the sub-tree inside the parentheses
-            print_ast(node->data.sub_tree, level + 1);
+            print_ast(node->sub_tree, level + 1);
             printf("END OF SUB tree inside parentheses:\n");
             return;
 
@@ -236,19 +243,10 @@ int main()
     t_list *list;
     list = lexer(buf);
     parser(list);
-    for (t_list *tmp = list; tmp; tmp = tmp->next)
-    {
-        if (tmp->next && (tmp->next->type == REDIRIN || tmp->next->type == REDIROUT
-        || tmp->next->type == APPEND || tmp->next->type == HEREDOC))
-        {
-            t_list *tmp2 = tmp->next->next;
-            free(tmp->next->s);
-            free(tmp->next);
-            tmp->next = tmp2;
-        }
-    }
     // print_list(list);
     t_tree *root = convert_to_ast(list);
     print_ast(root, 0);
+    free_list(list);
+    free_tree(root);
     return (0);
 }
