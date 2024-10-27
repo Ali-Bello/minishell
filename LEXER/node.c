@@ -12,9 +12,9 @@
 
 #include "../includes/minishell.h"
 
-void add_node(t_list **node, t_list *new_node)
+void	add_node(t_list **node, t_list *new_node)
 {
-	t_list *tmp;
+	t_list	*tmp;
 
 	tmp = *node;
 	if (*node == NULL)
@@ -28,9 +28,9 @@ void add_node(t_list **node, t_list *new_node)
 	}
 }
 
-t_list *new_node(char *s, int type)
+t_list	*new_node(char *s, int type)
 {
-	t_list *node;
+	t_list	*node;
 
 	node = malloc(sizeof(t_list));
 	if (node == NULL)

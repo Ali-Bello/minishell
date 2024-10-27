@@ -10,12 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-int is_operator(char c)
+int	is_operator(char c)
 {
-    return (c == '|' || c == '>' || c == '<');
+	return (c == '|' || c == '>' || c == '<');
 }
 
-int ft_isspace(char c)
+int	ft_isspace(char c)
 {
-    return (c == ' ' || (c <= 13 && c >= 9));
+	return (c == ' ' || (c <= 13 && c >= 9));
 }
