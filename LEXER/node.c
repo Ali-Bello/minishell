@@ -1,4 +1,6 @@
-#include "lexer.h"
+
+
+#include "../includes/minishell.h"
 
 void add_node(t_list **node, t_list *new_node)
 {
@@ -12,6 +14,7 @@ void add_node(t_list **node, t_list *new_node)
 		while (tmp->next != NULL)
 			tmp = tmp->next;
 		tmp->next = new_node;
+		new_node->prev = tmp;
 	}
 }
 
@@ -22,8 +25,8 @@ t_list *new_node(char *s, int type)
 	node = malloc(sizeof(t_list));
 	if (node == NULL)
 		return (NULL);
+	ft_bzero(node, sizeof(t_list));
 	node->type = type;
 	node->s = s;
-	node->next = NULL;
 	return (node);
 }
