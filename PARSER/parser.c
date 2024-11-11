@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/10/27 05:04:10 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/11 19:40:45 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ t_list	*get_args(t_list *list, t_cmd *data, int size)
 	{
 		list->s = expand_rm_quotes(list, list->s);
 		if (list->s && data->args)
-		{
-			data->args = extend_array(data->args, list->s, i, size);
-			i++;
-		}
+			data->args = extend_array(data->args, list->s, i++, &size);
 		tmp = list;
 		list = list->next;
 		free(tmp->s);
@@ -143,7 +140,7 @@ void	parser(t_list *list)
 	}
 }
 
-/*
+
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
@@ -239,4 +236,3 @@ int	main(void)
 	free_tree(root);
 	return (0);
 }
-*/

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/10/27 03:38:32 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/11 19:44:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ typedef struct s_wildcard
 	char			**fragments;
 	char			*pattern;
 	char			*current_dir;
+	t_list			*node;
 }					t_wildcard;
 
 typedef struct s_tree
@@ -112,14 +113,13 @@ void				append_words(t_list *node, t_expand *params, char *value);
 void				parse_operators(t_list **list, char *s, int *i);
 void				parse_words(t_list **list, char *s, int *i);
 void				parse_quotes(char *s, int *i);
-void				expand_wildcards(t_expand *params);
+void				expand_wildcards(t_expand *params, t_list *node);
 char				*extend_string(t_expand *params);
 t_list				*lexer(char *s);
 int					ft_isspace(char c);
 int					is_operator(char c);
 char				*append_value(t_expand *params, char *value);
 
-int					empty_space(char *s, int idx);
 char				*get_pattern(char *str, int idx);
 void				add_first_filename(t_expand *params, char *match,
 						int match_len);
@@ -128,6 +128,7 @@ void				print_list(t_list *list);
 t_tree				*convert_to_ast(t_list *list);
 void				free_list(t_list *list);
 void				free_tree(t_tree *tree);
-char				**extend_array(char **arr, char *new, int i, int size);
+char				**extend_array(char **arr, char *new, int i, int *size);
 int					get_args_count(t_list *list);
+void				free_array(char **arr);
 #endif

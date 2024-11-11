@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 04:05:37 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/27 04:55:05 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/11 20:24:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,14 +98,16 @@ void	fetsh_files(t_expand *params, t_wildcard *specs)
 	match_patterns(params, specs);
 	closedir(specs->dir);
 	free(dir_name);
+	free(specs->current_dir);
 	return ;
 }
 
-void	expand_wildcards(t_expand *params)
+void	expand_wildcards(t_expand *params, t_list *node)
 {
 	t_wildcard	specs;
 
 	ft_memset(&specs, 0, sizeof(t_wildcard));
+	specs.node = node;	
 	if (params->quotes_flags[0] || params->quotes_flags[1])
 	{
 		params->res = extend_string(params);
@@ -114,16 +116,12 @@ void	expand_wildcards(t_expand *params)
 	}
 	specs.pattern = get_pattern(params->str, params->i);
 	fetsh_files(params, &specs);
-	if (specs.flag)
-	{
-		while (params->str[params->i] && !ft_isspace(params->str[params->i]))
-			params->i++;
-	}
-	else
+	free(specs.pattern);
+	free_array(specs.fragments);
+	if (!specs.flag)
 	{
 		params->res = extend_string(params);
 		params->i++;
 	}
-	free(specs.pattern);
 	return ;
 }

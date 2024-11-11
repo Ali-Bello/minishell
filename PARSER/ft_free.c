@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:59:22 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/27 03:35:59 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/11 19:43:44 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,17 @@ void	free_tree(t_tree *tree)
 	free_tree(tree->left);
 	free_tree(tree->right);
 	free(tree);
+}
+
+void	free_array(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr && arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
 }

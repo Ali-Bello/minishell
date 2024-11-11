@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 07:21:23 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/27 03:38:10 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/11 19:39:55 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,25 +92,26 @@ void	append_words(t_list *node, t_expand *params, char *value)
 	free(s);
 }
 
-char	**extend_array(char **arr, char *new, int i, int size)
+char	**extend_array(char **arr, char *new, int i, int *size)
 {
 	char	**new_arr;
 
 	new_arr = arr;
-	if (i >= size)
+	if (i >= *size)
 	{
-		new_arr = malloc(sizeof(char *) * size + 2);
+		new_arr = malloc(sizeof(char *) * (*size + 2));
 		if (!new_arr)
 			return (NULL);
-		new_arr[i + 1] = NULL;
+		new_arr[*size + 1] = NULL;
 		i = 0;
-		while (i < size)
+		while (i < *size)
 		{
 			new_arr[i] = arr[i];
 			i++;
 		}
 		new_arr[i] = ft_strdup(new);
 		free(arr);
+		*size += 1;
 	}
 	else
 		new_arr[i] = ft_strdup(new);
