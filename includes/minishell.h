@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/11 19:44:00 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/13 18:49:05 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,20 @@ typedef struct s_expand
 	int				quotes_flags[2];
 }					t_expand;
 
+/**
+ * @brief Structure to handle wildcard expansion
+ * @flags flags[0] = prefix_flag (should add the current directory to the match)
+ * @flags flags[1] = suffix_flag (should match only if the pattern is at the end of the string)
+ * @flags flags[2] = dir_name (should match only directories)
+ * @flags flags[3] = exact_match (should match only if the pattern is the same as the string)
+ * @flags flags[4] = match_found flag
+ */
 typedef struct s_wildcard
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	size_t			name_len;
-	bool			flag;
+	bool			flags[5];
 	char			**fragments;
 	char			*pattern;
 	char			*current_dir;
@@ -131,4 +139,5 @@ void				free_tree(t_tree *tree);
 char				**extend_array(char **arr, char *new, int i, int *size);
 int					get_args_count(t_list *list);
 void				free_array(char **arr);
+void				match_patterns(t_expand *params, t_wildcard *specs);
 #endif

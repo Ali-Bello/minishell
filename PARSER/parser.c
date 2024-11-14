@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/11 19:40:45 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/14 14:48:33 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ void	merge_nodes(t_list *list, t_redir *redirs)
 {
 	int	size;
 
-	list->s = expand_rm_quotes(list, list->s);
+	if (list->type == WORD)
+		list->s = expand_rm_quotes(list, list->s);
 	size = get_args_count(list);
 	if (size)
 	{
@@ -73,6 +74,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 	new->file = ft_strdup(list->next->s);
 	free(list->next->s);
 	free(list->next);
+	list->next = NULL;
 	while ((*redirections) && (*redirections)->next)
 		*redirections = (*redirections)->next;
 	if (*redirections)
@@ -101,6 +103,8 @@ t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect)
 			if (list->next == current)
 			{
 				replace = add_redir_node(redirect, list);
+				if (!replace)
+					return (list);
 				list->next = replace;
 			}
 			else
@@ -139,8 +143,7 @@ void	parser(t_list *list)
 			tmp = tmp->next;
 	}
 }
-
-
+// /**
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
@@ -151,10 +154,8 @@ void	print_list(t_list *list)
 		for (int i = 0; tmp->data.args && tmp->data.args[i]; i++)
 			printf("       data -> cmd.args = [%s]\n", tmp->data.args[i]);
 		for (t_redir *tmp2 = tmp->data.redirections; tmp2; tmp2 = tmp2->next)
-			printf("       data -> cmd.redirections = {mode = [%d],\
-				file = [%s]\n",
-					tmp2->mode,
-					tmp2->file);
+			printf("       data -> cmd.redirections = {mode = [%d],file = [%s]}\n",
+					tmp2->mode, tmp2->file);
 		if (tmp->sub_list)
 		{
 			printf(GREEN "---SUB_list\n" RESET);
@@ -229,10 +230,12 @@ int	main(void)
 	t_list *list;
 	list = lexer(buf);
 	parser(list);
-	// print_list(list);
 	t_tree *root = convert_to_ast(list);
+	// print_list(list);
 	print_ast(root, 0);
 	free_list(list);
 	free_tree(root);
+	free(buf);
 	return (0);
 }
+// **/

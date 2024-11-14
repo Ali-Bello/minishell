@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/11 18:13:13 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/14 14:11:27 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ char	*expand_rm_quotes(t_list *node, char *s)
 		return (s);
 	ft_bzero(&params, sizeof(t_expand));
 	params.str = s;
-	while (s[params.i])
+	while (s && s[params.i])
 	{
 		if (s[params.i] != '\'' && s[params.i] != '"' && s[params.i] != '$'
 			&& s[params.i] != '*')
