@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:22:30 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 01:43:49 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 16:37:04 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,6 @@ char	*get_segment(char *s, int *idx, int len)
 
 void	set_segments(t_wildcard *rules)
 {
-	rules->ptr = rules->pattern;
-	rules->start = rules->pattern;
-	rules->idx = 0;
 	while (rules->ptr && *rules->ptr)
 	{
 		if (*rules->ptr == '/')
@@ -46,6 +43,13 @@ void	set_segments(t_wildcard *rules)
 		}
 		else
 			rules->ptr++;
+	}
+	if (rules->ptr > rules->start)
+	{
+		rules->len = rules->ptr - rules->start;
+		rules->segments[rules->idx] = get_segment(rules->start, &rules->idx,
+				rules->len);
+		rules->idx--;
 	}
 }
 
@@ -72,16 +76,9 @@ char	*get_pattern(t_expand *params)
 void	add_match(t_wildcard *rules, char *s)
 {
 	char	*str;
-	char	*tmp;
 
-	str = ft_strtrim(s, "./");
-	if (rules->add_slash)
-	{
-		tmp = ft_strjoin(str, "/");
-		free(str);
-		str = tmp;
-	}
-	if (!rules->match_found)
+	str = construct_filename(rules, s);
+	if (!rules->match_found && str)
 	{
 		free(rules->params->res);
 		rules->params->res = ft_strdup(str);
@@ -92,7 +89,7 @@ void	add_match(t_wildcard *rules, char *s)
 			&& !ft_isspace(rules->params->str[rules->params->i]))
 			rules->params->i++;
 	}
-	else
+	else if (str)
 		rules->node = insert_node(rules->node, new_node(ft_strdup(str), WORD));
 	free(str);
 }

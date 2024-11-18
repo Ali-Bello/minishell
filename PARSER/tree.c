@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 07:54:21 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 14:50:36 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 23:14:05 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ void	insert_pipe(t_cmd data, t_tree *stats[])
 		TMP->left = CURRENT_CMD;
 	else if (LAST_OP)
 	{
-		LAST_OP->right = CURRENT_CMD;
-		TMP->left = LAST_OP;
+		LAST_OP->right = TMP;
+		TMP->left = CURRENT_CMD;
 		LAST_OP = NULL;
 	}
 	else
@@ -64,7 +64,8 @@ void	insert_pipe(t_cmd data, t_tree *stats[])
 			ROOT->right = CURRENT_CMD;
 		TMP->left = ROOT;
 	}
-	ROOT = TMP;
+	if (!LAST_OP && TMP->left != CURRENT_CMD)
+		ROOT = TMP;
 	LAST_PIPE = TMP;
 	CURRENT_CMD = NULL;
 }
@@ -73,10 +74,7 @@ void	insert_logical_op(t_list *node, t_tree *stats[])
 {
 	TMP = new_tree_node(node->type, node->data);
 	if (!ROOT)
-	{
-		TMP->left = CURRENT_CMD;
-		ROOT = TMP;
-	}
+		set_position(stats);
 	else if (LAST_PIPE)
 	{
 		LAST_PIPE->right = CURRENT_CMD;
@@ -92,8 +90,8 @@ void	insert_logical_op(t_list *node, t_tree *stats[])
 	{
 		ROOT->right = CURRENT_CMD;
 		TMP->left = ROOT;
+		ROOT = TMP;
 	}
-	ROOT = TMP;
 	LAST_OP = TMP;
 	CURRENT_CMD = NULL;
 }

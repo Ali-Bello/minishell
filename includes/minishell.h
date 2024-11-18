@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/18 01:39:25 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 23:13:26 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,4 +145,13 @@ void				swap_strings(t_list *a, t_list *b);
 void				final_touches(t_wildcard *rules);
 t_list				*insert_node(t_list *start, t_list *new_node);
 void				sort_fnames(t_list *start, t_list *end);
+char				*construct_filename(t_wildcard *rules, char *s);
+void				set_position(t_tree *stats[]);
+void				arrange_nodes(t_list *list[3], t_redir *redirections);
+void				merge_nodes(t_list *list, t_redir *redirs);
+t_list				*get_redirections(t_list *list, t_list *current,
+						t_redir **redirect);
+void				parser(t_list *list);
+void				print_ast(t_tree *node, int level);
+
 #endif

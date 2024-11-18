@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/18 14:54:48 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 23:12:49 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,9 @@ void	merge_nodes(t_list *list, t_redir *redirs)
 	size = get_args_count(list);
 	if (size)
 	{
-		list->data.args = malloc(sizeof(char *) * (size + 1));
+		list->data.args = ft_calloc(size + 1, sizeof(char *));
 		if (!list->data.args)
 			return ;
-		list->data.args[size] = NULL;
 	}
 	if (list->s && size)
 	{
@@ -114,30 +113,18 @@ t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect)
 
 void	parser(t_list *list)
 {
-	t_list	*tmp;
+	t_list	*tmp[3];
 	t_redir	*redirections;
-	t_list	*start;
 
-	tmp = list;
+	tmp[0] = list;
 	redirections = NULL;
-	start = tmp;
-	while (tmp)
+	tmp[1] = list;
+	tmp[2] = NULL;
+	while (tmp[0])
 	{
-		if (tmp && tmp->type == WORD)
-		{
-			tmp = get_redirections(start, tmp, &redirections);
-			merge_nodes(tmp, redirections);
-			redirections = NULL;
-		}
-		else if (tmp && tmp->type == PARENTHESIS)
-		{
-			tmp->sub_list = lexer(tmp->s);
-			parser(tmp->sub_list);
-		}
-		else if (tmp->type == PIPE || tmp->type == AND || tmp->type == OR)
-			start = tmp->next;
-		if (tmp)
-			tmp = tmp->next;
+		arrange_nodes(tmp, redirections);
+		if (tmp[0])
+			tmp[0] = tmp[0]->next;
 	}
 }
 /**
@@ -175,7 +162,7 @@ void	print_ast(t_tree *node, int level)
 	{
 	case CMD:
 		printf("CMD: %s", node->data.cmd);
-		if (node->data.args)
+		if (node->data.cmd && node->data.args)
 		{
 			printf(" args: ");
 			for (int i = 0; node->data.args[i]; i++)
@@ -204,6 +191,10 @@ void	print_ast(t_tree *node, int level)
 		printf("SUB tree inside parentheses: \n");
 		// Print the sub-tree inside the parentheses
 		print_ast(node->sub_tree, level + 1);
+		for (t_redir *tmp2 = node->data.redirections; tmp2;\
+			tmp2 = tmp2->next)
+				printf(" redirections = {mode = [%d], file = [%s]\n",
+					tmp2->mode, tmp2->file);
 		printf("END OF SUB tree inside parentheses:\n");
 		return ;
 	default:
@@ -231,8 +222,8 @@ int	main(void)
 	buf = readline(BLUE "$$:" RESET);
 	list = lexer(buf);
 	parser(list);
-	root = convert_to_ast(list);
 	// print_list(list);
+	root = convert_to_ast(list);
 	print_ast(root, 0);
 	free_list(list);
 	free_tree(root);

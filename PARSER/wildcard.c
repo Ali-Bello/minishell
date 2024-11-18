@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 04:05:37 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 01:50:47 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 17:59:58 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,11 @@ void	match_files(t_wildcard *rules, struct dirent *entry, char *curr_path,
 	char	*tmp_path;
 
 	tmp_path = ft_strjoin(curr_path, "/");
+	free(rules->next_path);
 	rules->next_path = ft_strjoin(tmp_path, entry->d_name);
 	rules->curr_path = curr_path;
 	free(tmp_path);
+	tmp_path = ft_strdup(rules->next_path);
 	if (rules->pattern[ft_strlen(rules->pattern) - 1] == '/')
 		rules->add_slash = 1;
 	if (ft_fnmatch(rules->segments[seg_idx], entry->d_name) == 0)
@@ -88,11 +90,12 @@ void	match_files(t_wildcard *rules, struct dirent *entry, char *curr_path,
 		else if (ft_strncmp(rules->segments[seg_idx + 1], "/", 2) == 0)
 		{
 			if (entry->d_type == DT_DIR)
-				recursive_match(rules, rules->next_path, seg_idx + 2);
+				recursive_match(rules, tmp_path, seg_idx + 2);
 		}
 		else
 			recursive_match(rules, rules->curr_path, seg_idx + 1);
 	}
+	(void)(free(tmp_path), free(curr_path));
 	free(rules->next_path);
 	rules->next_path = NULL;
 }
@@ -116,17 +119,16 @@ void	recursive_match(t_wildcard *rules, char *curr_path, int segm_idx)
 			entry = readdir(dir);
 			continue ;
 		}
-		match_files(rules, entry, curr_path, segm_idx);
+		match_files(rules, entry, ft_strdup(curr_path), segm_idx);
 		entry = readdir(dir);
 	}
-	free(rules->curr_path);
-	rules->curr_path = NULL;
 	closedir(dir);
 }
 
 void	expand_wildcards(t_expand *params, t_list *node)
 {
 	t_wildcard	rules;
+	char		*cwd;
 
 	if (params->quotes_flags[0] || params->quotes_flags[1])
 	{
@@ -138,15 +140,13 @@ void	expand_wildcards(t_expand *params, t_list *node)
 	rules.node = node;
 	rules.pattern = get_pattern(params);
 	init_rules(&rules, params);
+	rules.ptr = rules.pattern;
+	rules.start = rules.pattern;
+	rules.idx = 0;
 	set_segments(&rules);
-	if (rules.ptr > rules.start)
-	{
-		rules.len = rules.ptr - rules.start;
-		rules.segments[rules.idx] = get_segment(rules.start, &rules.idx,
-				rules.len);
-		rules.idx--;
-	}
-	recursive_match(&rules, ft_strdup("."), 0);
+	cwd = ft_strdup(".");
+	recursive_match(&rules, cwd, 0);
 	rules.params->idx_node = rules.node;
+	free(cwd);
 	final_touches(&rules);
 }

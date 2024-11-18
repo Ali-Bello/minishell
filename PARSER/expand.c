@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 01:46:52 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 18:09:46 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ void	expand_var(t_expand *params, t_list *node)
 		append_words(node, params, value);
 	else if (value)
 		params->res = append_value(params, value);
+	else
+		params->res = append_value(params, "");
 	free(var_name);
 }
 
