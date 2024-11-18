@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_utils.c                                     :+:      :+:    :+:   */
+/*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 07:54:21 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/14 14:21:13 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 14:50:36 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	insert_pipe(t_cmd data, t_tree *stats[])
 	else if (LAST_OP)
 	{
 		LAST_OP->right = CURRENT_CMD;
-		TMP->left = ROOT;
+		TMP->left = LAST_OP;
 		LAST_OP = NULL;
 	}
 	else
@@ -81,6 +81,7 @@ void	insert_logical_op(t_list *node, t_tree *stats[])
 	{
 		LAST_PIPE->right = CURRENT_CMD;
 		TMP->left = ROOT;
+		LAST_PIPE = NULL;
 	}
 	else if (LAST_OP)
 	{
@@ -92,8 +93,7 @@ void	insert_logical_op(t_list *node, t_tree *stats[])
 		ROOT->right = CURRENT_CMD;
 		TMP->left = ROOT;
 	}
-	if (ROOT)
-		ROOT = TMP;
+	ROOT = TMP;
 	LAST_OP = TMP;
 	CURRENT_CMD = NULL;
 }

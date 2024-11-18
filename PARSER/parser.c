@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/18 01:50:26 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 14:54:48 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ void	print_list(t_list *list)
 		for (int i = 0; tmp->data.args && tmp->data.args[i]; i++)
 			printf("       data -> cmd.args = [%s]\n", tmp->data.args[i]);
 		for (t_redir *tmp2 = tmp->data.redirections; tmp2; tmp2 = tmp2->next)
-			printf("       data
+			printf("       data\
 				-> cmd.redirections = {mode = [%d],file = [%s]}\n", tmp2->mode,
 				tmp2->file);
 		if (tmp->sub_list)
