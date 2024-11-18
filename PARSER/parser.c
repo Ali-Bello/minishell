@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/14 14:48:33 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 01:50:26 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_list	*get_args(t_list *list, t_cmd *data, int size)
 	i = 1;
 	while (list && list->type == WORD)
 	{
-		list->s = expand_rm_quotes(list, list->s);
+		expand_rm_quotes(list, list->s);
 		if (list->s && data->args)
 			data->args = extend_array(data->args, list->s, i++, &size);
 		tmp = list;
@@ -36,7 +36,7 @@ void	merge_nodes(t_list *list, t_redir *redirs)
 	int	size;
 
 	if (list->type == WORD)
-		list->s = expand_rm_quotes(list, list->s);
+		expand_rm_quotes(list, list->s);
 	size = get_args_count(list);
 	if (size)
 	{
@@ -96,10 +96,7 @@ t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect)
 				|| list->type == APPEND || list->type == HEREDOC))
 		{
 			if (list->type != HEREDOC && list->next)
-			{
-				list->next->amibiguous_redir = 1;
-				list->next->s = expand_rm_quotes(list->next, list->next->s);
-			}
+				expand_rm_quotes(list->next, list->next->s);
 			if (list->next == current)
 			{
 				replace = add_redir_node(redirect, list);
@@ -143,7 +140,7 @@ void	parser(t_list *list)
 			tmp = tmp->next;
 	}
 }
-// /**
+/**
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
@@ -154,8 +151,9 @@ void	print_list(t_list *list)
 		for (int i = 0; tmp->data.args && tmp->data.args[i]; i++)
 			printf("       data -> cmd.args = [%s]\n", tmp->data.args[i]);
 		for (t_redir *tmp2 = tmp->data.redirections; tmp2; tmp2 = tmp2->next)
-			printf("       data -> cmd.redirections = {mode = [%d],file = [%s]}\n",
-					tmp2->mode, tmp2->file);
+			printf("       data
+				-> cmd.redirections = {mode = [%d],file = [%s]}\n", tmp2->mode,
+				tmp2->file);
 		if (tmp->sub_list)
 		{
 			printf(GREEN "---SUB_list\n" RESET);
@@ -186,7 +184,7 @@ void	print_ast(t_tree *node, int level)
 		if (node->data.redirections)
 		{
 			for (t_redir *tmp2 = node->data.redirections; tmp2;\
-              tmp2 = tmp2->next)
+			tmp2 = tmp2->next)
 				printf(" redirections = {mode = [%d], file = [%s]\n",
 					tmp2->mode, tmp2->file);
 		}
@@ -226,11 +224,14 @@ void	print_ast(t_tree *node, int level)
 
 int	main(void)
 {
-	char *buf = readline(BLUE "$$:" RESET);
-	t_list *list;
+	char	*buf;
+	t_list	*list;
+	t_tree	*root;
+
+	buf = readline(BLUE "$$:" RESET);
 	list = lexer(buf);
 	parser(list);
-	t_tree *root = convert_to_ast(list);
+	root = convert_to_ast(list);
 	// print_list(list);
 	print_ast(root, 0);
 	free_list(list);

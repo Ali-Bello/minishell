@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/13 18:49:05 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 01:39:25 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,26 +82,27 @@ typedef struct s_expand
 	int				res_idx;
 	int				res_size;
 	int				quotes_flags[2];
+	bool			to_sort;
+	t_list			*idx_node;
 }					t_expand;
 
-/**
- * @brief Structure to handle wildcard expansion
- * @flags flags[0] = prefix_flag (should add the current directory to the match)
- * @flags flags[1] = suffix_flag (should match only if the pattern is at the end of the string)
- * @flags flags[2] = dir_name (should match only directories)
- * @flags flags[3] = exact_match (should match only if the pattern is the same as the string)
- * @flags flags[4] = match_found flag
- */
 typedef struct s_wildcard
 {
-	DIR				*dir;
-	struct dirent	*entry;
-	size_t			name_len;
-	bool			flags[5];
-	char			**fragments;
+	char			**segments;
 	char			*pattern;
-	char			*current_dir;
+	char			*ptr;
+	char			*start;
+	char			*curr_path;
+	char			*next_path;
+	int				num_segments;
+	int				idx;
+	int				len;
+	bool			skip_hidden;
+	bool			add_slash;
+	bool			match_found;
+	t_expand		*params;
 	t_list			*node;
+	t_list			*last_node;
 }					t_wildcard;
 
 typedef struct s_tree
@@ -116,7 +117,7 @@ typedef struct s_tree
 t_list				*new_node(char *s, int type);
 void				add_node(t_list **node, t_list *new_node);
 
-char				*expand_rm_quotes(t_list *node, char *s);
+void				expand_rm_quotes(t_list *node, char *s);
 void				append_words(t_list *node, t_expand *params, char *value);
 void				parse_operators(t_list **list, char *s, int *i);
 void				parse_words(t_list **list, char *s, int *i);
@@ -128,10 +129,8 @@ int					ft_isspace(char c);
 int					is_operator(char c);
 char				*append_value(t_expand *params, char *value);
 
-char				*get_pattern(char *str, int idx);
-void				add_first_filename(t_expand *params, char *match,
-						int match_len);
-void				add_match(t_expand *params, t_wildcard *specs);
+char				*get_pattern(t_expand *params);
+void				add_match(t_wildcard *rules, char *str);
 void				print_list(t_list *list);
 t_tree				*convert_to_ast(t_list *list);
 void				free_list(t_list *list);
@@ -140,4 +139,10 @@ char				**extend_array(char **arr, char *new, int i, int *size);
 int					get_args_count(t_list *list);
 void				free_array(char **arr);
 void				match_patterns(t_expand *params, t_wildcard *specs);
+char				*get_segment(char *s, int *idx, int len);
+void				set_segments(t_wildcard *rules);
+void				swap_strings(t_list *a, t_list *b);
+void				final_touches(t_wildcard *rules);
+t_list				*insert_node(t_list *start, t_list *new_node);
+void				sort_fnames(t_list *start, t_list *end);
 #endif

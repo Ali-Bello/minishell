@@ -15,7 +15,7 @@ OBJS_DIR = objs
 # Source files
 LEXER_SRCS = LEXER/lexer.c LEXER/node.c LEXER/utils.c
 PARSER_SRCS = PARSER/expand.c PARSER/expand_utils.c PARSER/parser.c PARSER/ft_free.c\
-			PARSER/parser_utils.c PARSER/wildcard.c PARSER/wildcard_utils.c
+			PARSER/tree.c PARSER/wildcard.c PARSER/wildcard_utils.c
 SRCS = $(LEXER_SRCS) $(PARSER_SRCS)
 
 # Object files

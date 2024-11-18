@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/14 14:11:27 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 01:46:52 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,12 @@ void	set_quotes_flags(t_expand *params)
 	params->i++;
 }
 
-char	*expand_rm_quotes(t_list *node, char *s)
+void	expand_rm_quotes(t_list *node, char *s)
 {
 	t_expand	params;
 
 	if (node->expand_flag)
-		return (s);
+		return ;
 	ft_bzero(&params, sizeof(t_expand));
 	params.str = s;
 	while (s && s[params.i])
@@ -95,8 +95,6 @@ char	*expand_rm_quotes(t_list *node, char *s)
 			&& s[params.i] != '*')
 		{
 			params.res = extend_string(&params);
-			if (!params.res)
-				return (NULL);
 			params.i++;
 		}
 		else if (s[params.i] == '\'' || s[params.i] == '"')
@@ -107,5 +105,7 @@ char	*expand_rm_quotes(t_list *node, char *s)
 			expand_wildcards(&params, node);
 	}
 	free(s);
-	return (params.res);
+	node->s = params.res;
+	if (params.to_sort)
+		sort_fnames(node, params.idx_node->next);
 }
