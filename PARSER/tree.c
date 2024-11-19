@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 07:54:21 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 23:14:05 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/19 19:31:11 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ t_tree	*new_tree_node(t_token type, t_cmd data)
 
 void	insert_pipe(t_cmd data, t_tree *stats[])
 {
+	int	flag;
+
+	flag = 0;
 	TMP = new_tree_node(PIPE, data);
 	if (!ROOT)
 		TMP->left = CURRENT_CMD;
@@ -55,6 +58,7 @@ void	insert_pipe(t_cmd data, t_tree *stats[])
 		LAST_OP->right = TMP;
 		TMP->left = CURRENT_CMD;
 		LAST_OP = NULL;
+		flag = 1;
 	}
 	else
 	{
@@ -64,7 +68,7 @@ void	insert_pipe(t_cmd data, t_tree *stats[])
 			ROOT->right = CURRENT_CMD;
 		TMP->left = ROOT;
 	}
-	if (!LAST_OP && TMP->left != CURRENT_CMD)
+	if (!flag)
 		ROOT = TMP;
 	LAST_PIPE = TMP;
 	CURRENT_CMD = NULL;
