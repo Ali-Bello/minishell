@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 07:54:21 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/19 19:31:11 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/20 12:01:59 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,8 @@ void	insert_logical_op(t_list *node, t_tree *stats[])
 	{
 		ROOT->right = CURRENT_CMD;
 		TMP->left = ROOT;
-		ROOT = TMP;
 	}
+	ROOT = TMP;
 	LAST_OP = TMP;
 	CURRENT_CMD = NULL;
 }
