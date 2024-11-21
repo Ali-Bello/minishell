@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 18:09:46 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/21 16:42:35 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,15 @@ void	expand_var(t_expand *params, t_list *node)
 	char	*var_name;
 	char	*value;
 
-	if (params->quotes_flags[1] || !params->str[params->i + 1])
-	{
-		params->res = extend_string(params);
-		params->i++;
+	if (innormal_var(params) == true)
 		return ;
-	}
-	if (params->str[params->i + 1] == '?')
-	{
-		expand_exit_status(params);
-		return ;
-	}
 	var_name = get_varname(&params->str[params->i + 1], &params->i);
+	if (var_name && !var_name[0])
+	{
+		params->res = append_value(params, "$");
+		free(var_name);
+		return ;
+	}
 	value = getenv(var_name);
 	if (!params->quotes_flags[0] && value)
 		append_words(node, params, value);

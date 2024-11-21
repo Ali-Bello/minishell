@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/18 23:13:26 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/21 16:44:17 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,10 +147,13 @@ t_list				*insert_node(t_list *start, t_list *new_node);
 void				sort_fnames(t_list *start, t_list *end);
 char				*construct_filename(t_wildcard *rules, char *s);
 void				set_position(t_tree *stats[]);
-void				arrange_nodes(t_list *list[3], t_redir *redirections);
+void				arrange_nodes(t_list *list[3], t_redir **redirections);
 void				merge_nodes(t_list *list, t_redir *redirs);
 t_list				*get_redirections(t_list *list, t_list *current,
 						t_redir **redirect);
+void				expand_exit_status(t_expand *params);
+void				append_node(t_redir **redirection, t_redir *new);
+bool				innormal_var(t_expand *params);
 void				parser(t_list *list);
 void				print_ast(t_tree *node, int level);
 

@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/19 19:45:23 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/21 16:43:34 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 	free(list->next->s);
 	free(list->next);
 	list->next = NULL;
-	while ((*redirections) && (*redirections)->next)
-		*redirections = (*redirections)->next;
-	if (*redirections)
-		(*redirections)->next = new;
-	else
-		*redirections = new;
+	append_node(redirections, new);
 	return (tmp);
 }
 
@@ -122,12 +117,12 @@ void	parser(t_list *list)
 	tmp[2] = NULL;
 	while (tmp[0])
 	{
-		arrange_nodes(tmp, redirections);
+		arrange_nodes(tmp, &redirections);
 		if (tmp[0])
 			tmp[0] = tmp[0]->next;
 	}
 }
-// /**
+/**
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
