@@ -6,116 +6,108 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/10/13 06:18:10 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/18 18:09:46 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../LEXER/lexer.h"
+#include "../includes/minishell.h"
 
-char    *get_varname(char *s, int *j)
+char	*get_varname(char *s, int *j)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (s[i] && !isspace(s[i]) && (isalnum(s[i]) || s[i] == '_'))
-        i++;
-    *j += i;
-    return (ft_strndup(s, i));
+	i = 0;
+	while (s[i] && (ft_isalnum(s[i]) || s[i] == '_'))
+		i++;
+	*j += i + 1;
+	return (ft_substr(s, 0, i));
 }
 
-void    expand_exit_status(t_expand *params)
+void	expand_exit_status(t_expand *params)
 {
-    char    *value;
-    size_t   value_len;
+	char	*value;
 
-    // value = ft_itoa(EXIT_STATUS);
-    value_len = strlen(value);
-    params->res = realloc(params->res, params->res_size + value_len + 1);
-    if (!params->res)
-        return;
-    strcpy(params->res + params->res_idx, value);
-    params->res_idx += value_len;
-    free(value);
-    params->i++; // Skip the '?' character
+	value = ft_itoa(EXIT_STATUS);
+	params->res = append_value(params, value);
+	if (!params->res)
+		return ;
+	free(value);
+	params->i += 2;
 }
 
-void    expand_var(t_expand *params)
+void	expand_var(t_expand *params, t_list *node)
 {
-    char *var_name;
-    char *value;
-    size_t value_len;
+	char	*var_name;
+	char	*value;
 
-        //Special case for '$?'
-    // if (params->str[params->i + 1] == '?')
-    // {
-    //     expand_exit_status(params);
-    //     return;
-    // }
-    var_name = get_varname(&params->str[params->i + 1], &params->i); // Update *i to point to the end of var name
-    value = getenv(var_name);
-    value_len = (value != NULL) * strlen(value) + (value == NULL) * 0;
-    // Expand the result buffer
-    // printf("-->[%d]\n", params->res_size);
-    params->res = realloc(params->res, params->res_size + value_len + 1);
-    if (!params->res) 
-        return (free(var_name));// Handle allocation failure
-    
-    strcpy(params->res + params->res_idx, value);
-    params->res_idx += value_len;
-    free(var_name);
-    params->i++;
+	if (params->quotes_flags[1] || !params->str[params->i + 1])
+	{
+		params->res = extend_string(params);
+		params->i++;
+		return ;
+	}
+	if (params->str[params->i + 1] == '?')
+	{
+		expand_exit_status(params);
+		return ;
+	}
+	var_name = get_varname(&params->str[params->i + 1], &params->i);
+	value = getenv(var_name);
+	if (!params->quotes_flags[0] && value)
+		append_words(node, params, value);
+	else if (value)
+		params->res = append_value(params, value);
+	else
+		params->res = append_value(params, "");
+	free(var_name);
 }
 
-void    set_quotes_flags(char c, int flags[], int *i)
+void	set_quotes_flags(t_expand *params)
 {
-    if (c == '\'' && !flags[0])
-        flags[1] = !flags[1];
-    if (c == '\"' && !flags[1])
-        flags[0] = !flags[0];
-    (*i)++;
+	if (params->str[params->i] == '\'' && !params->quotes_flags[0])
+	{
+		params->quotes_flags[1] = !params->quotes_flags[1];
+		if (params->i > 0 && params->str[params->i - 1] == '\'')
+			params->res = append_value(params, "");
+	}
+	else if (params->str[params->i] == '\'')
+		params->res = extend_string(params);
+	if (params->str[params->i] == '"' && !params->quotes_flags[1])
+	{
+		params->quotes_flags[0] = !params->quotes_flags[0];
+		if (params->i > 0 && params->str[params->i - 1] == '"')
+			params->res = append_value(params, "");
+	}
+	else if (params->str[params->i] == '"')
+		params->res = extend_string(params);
+	params->i++;
 }
 
-char    *extend_string(t_expand *params)
+void	expand_rm_quotes(t_list *node, char *s)
 {
-    char *str;
+	t_expand	params;
 
-    str = malloc(params->res_size + 2);
-    if (!str)
-        return NULL;
-    if (params->res)
-        strcpy(str, params->res);
-    str[params->res_idx++] = params->str[params->i];
-    str[params->res_idx] = '\0';
-    params->res_size++;
-    free(params->res);
-    return (str);
-}
-
-char *expand_and_remove_quotes(char *s)
-{
-    t_expand params;
-    int quotes_flags[2];
-
-    memset(&params, 0, sizeof(t_expand));
-    memset(&quotes_flags, 0, sizeof(quotes_flags));
-    params.str = s;
-    while (s[params.i])
-    {
-        if (s[params.i] == '\'' || s[params.i] == '"')
-        {
-            set_quotes_flags(s[params.i], quotes_flags, &params.i);
-            continue;
-        }
-        if (s[params.i] == '$' && !quotes_flags[1])
-        {
-            expand_var(&params);
-            continue;
-        }
-        params.res = extend_string(&params);
-        if (!params.res)
-            return NULL;
-        params.i++;
-    }
-    free(s);
-    return (params.res);
+	if (node->expand_flag)
+		return ;
+	ft_bzero(&params, sizeof(t_expand));
+	params.str = s;
+	while (s && s[params.i])
+	{
+		if (s[params.i] != '\'' && s[params.i] != '"' && s[params.i] != '$'
+			&& s[params.i] != '*')
+		{
+			params.res = extend_string(&params);
+			params.i++;
+		}
+		else if (s[params.i] == '\'' || s[params.i] == '"')
+			set_quotes_flags(&params);
+		else if (s[params.i] == '$')
+			expand_var(&params, node);
+		else if (s[params.i] == '*')
+			expand_wildcards(&params, node);
+	}
+	free(s);
+	node->s = params.res;
+	if (params.to_sort)
+		sort_fnames(node, params.idx_node->next);
 }

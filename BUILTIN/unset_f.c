@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   unset_f.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 23:02:02 by marvin           ###   ########.fr       */
+/*   Created: 2024/11/22 22:45:08 by anamella          #+#    #+#             */
+/*   Updated: 2024/11/22 22:48:03 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	is_operator(char c)
+int	unset_f(char **env, t_mini *mini)
 {
-	return (c == '|' || c == '>' || c == '<');
-}
+	int		i;
+	t_env	**env_l;
 
-int	ft_isspace(char c)
-{
-	return (c == ' ' || (c <= 13 && c >= 9));
+	i = 0;
+	env_l = &mini->env;
+	while (env && env[i])
+	{
+		del_env(env_l, env[i]);
+		i++;
+	}
+	return (0);
 }

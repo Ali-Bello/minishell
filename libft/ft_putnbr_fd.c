@@ -1,23 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anamella <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 23:02:02 by marvin           ###   ########.fr       */
+/*   Created: 2023/11/07 15:44:16 by anamella          #+#    #+#             */
+/*   Updated: 2023/11/12 21:20:10 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-int	is_operator(char c)
+void	ft_putnbr_fd(int n, int fd)
 {
-	return (c == '|' || c == '>' || c == '<');
-}
-
-int	ft_isspace(char c)
-{
-	return (c == ' ' || (c <= 13 && c >= 9));
+	if (n < 0)
+		ft_putchar_fd('-', fd);
+	if ((long int)n * ((n > 0) - (n < 0)) > 9)
+		ft_putnbr_fd(n / 10 * ((n > 0) - (n < 0)), fd);
+	ft_putchar_fd((n % 10 * ((n > 0) - (n < 0))) + 48, fd);
 }

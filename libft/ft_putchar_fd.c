@@ -1,23 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anamella <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 23:02:02 by marvin           ###   ########.fr       */
+/*   Created: 2023/11/07 15:44:05 by anamella          #+#    #+#             */
+/*   Updated: 2023/11/07 15:44:07 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-int	is_operator(char c)
+void	ft_putchar_fd(char c, int fd)
 {
-	return (c == '|' || c == '>' || c == '<');
-}
-
-int	ft_isspace(char c)
-{
-	return (c == ' ' || (c <= 13 && c >= 9));
+	write(fd, &c, 1);
 }

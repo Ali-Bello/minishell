@@ -1,23 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_isascii.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anamella <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 23:02:02 by marvin           ###   ########.fr       */
+/*   Created: 2023/11/07 15:42:26 by anamella          #+#    #+#             */
+/*   Updated: 2023/11/12 20:10:08 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-int	is_operator(char c)
+int	ft_isascii(int c)
 {
-	return (c == '|' || c == '>' || c == '<');
-}
-
-int	ft_isspace(char c)
-{
-	return (c == ' ' || (c <= 13 && c >= 9));
+	return (c >= 0 && c <= 127);
 }

@@ -1,23 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anamella <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 23:02:02 by marvin           ###   ########.fr       */
+/*   Created: 2023/11/07 15:41:34 by anamella          #+#    #+#             */
+/*   Updated: 2023/11/19 01:45:05 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-int	is_operator(char c)
+void	ft_bzero(void *s, size_t n)
 {
-	return (c == '|' || c == '>' || c == '<');
-}
+	size_t	i;
 
-int	ft_isspace(char c)
-{
-	return (c == ' ' || (c <= 13 && c >= 9));
+	i = 0;
+	while (i < n)
+	{
+		((unsigned char *)s)[i] = 0;
+		i++;
+	}
 }
