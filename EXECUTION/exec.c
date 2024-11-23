@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:42 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:46:41 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/23 02:11:58 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,7 @@ int	heredoc(const char *delimiter, t_mini *mini)
 {
 	int		fd[2];
 	char	*line;
-	int		og_std_in;
 
-	og_std_in = dup(0);
-	if (og_std_in == -1)
-		return (perror("dup"), -1);
-	if (dup2(mini->infd, 0) == -1)
-		return (perror("dup2"), -1);
 	create_pipe(fd, mini);
 	while (1)
 	{
@@ -36,8 +30,6 @@ int	heredoc(const char *delimiter, t_mini *mini)
 		write(fd[1], "\n", 1);
 		free(line);
 	}
-	if (dup2(og_std_in, 0) == -1)
-		return (close_fd(fd[0], fd[1]), perror("dup2"), -1);
 	return (close(fd[1]), fd[0]);
 }
 

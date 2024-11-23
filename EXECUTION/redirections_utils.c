@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:50 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:52:22 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/23 01:56:05 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	redirections_type(t_redir *redirections, t_mini *mini)
 {
 	int	fd;
 
+	(void)mini;
 	fd = -1;
 	if (redirections->mode == APPEND)
 		fd = open(redirections->file, O_CREAT | O_RDWR | O_APPEND, 0644);
@@ -24,7 +25,7 @@ int	redirections_type(t_redir *redirections, t_mini *mini)
 	else if (redirections->mode == REDIRIN)
 		fd = open(redirections->file, O_RDONLY);
 	else if (redirections->mode == HEREDOC)
-		fd = heredoc(redirections->file, mini);
+		fd = redirections->fd;
 	return (fd);
 }
 

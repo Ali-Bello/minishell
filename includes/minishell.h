@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:57 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:45:57 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/23 01:16:16 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ typedef struct s_redir
 {
 	t_token			mode;
 	char			*file;
+	int				fd;
 	struct s_redir	*next;
 }					t_redir;
 

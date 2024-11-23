@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
+/*   Updated: 2024/11/23 02:23:36 by anamella         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "includes/minishell.h"
 void reset_fd(int fd_in, int fd_out)
 {
@@ -34,7 +46,24 @@ t_mini *create_mini(char **env)
 	return (mini);
 }
 
+void read_heredoc(t_tree *root, t_mini *mini)
+{
+	t_redir *red;
+	int		i;
 
+	i = 0;
+	if (root == NULL)
+		return;
+	red = root->data.redirections;
+	while (red)
+	{
+		if (red->mode == HEREDOC)
+			red->fd = heredoc(red->file, mini);
+		red = red->next;
+	}
+	read_heredoc(root->left, mini);
+	read_heredoc(root->right, mini);
+}
 int main (int ac, char **av, char **ev)
 {
     t_mini *mini;
@@ -49,6 +78,7 @@ int main (int ac, char **av, char **ev)
 		add_history(input);
 		if (!input)
 		{
+			printf("hoola\n");
 			mini->root = NULL;
 			free_mini(mini);
 			break;
@@ -56,18 +86,22 @@ int main (int ac, char **av, char **ev)
         list = lexer(input);
         parser(list);
         t_tree *root = convert_to_ast(list);
+		// print_ast(root, 0);
+		// for (t_redir *red = root->data.redirections; red; red = red->next)
+			// printf("%s\n", red->file);
+		read_heredoc(root, mini);
 		mini->root = root;
 		mini->exit = execute_ast(root, mini);
 		printf("exit == %d\n", mini->exit);
 		// for(int i = 0; mini->char_env[i];i++)
 		// 	printf("%s\n", mini->char_env[i]);
-		mini->root = NULL;
+		// mini->root = NULL;
 		// free_(mini->char_env);
 		// mini->char_env = create_char_env(mini->env);
         reset_fd(mini->infd, mini->outfd);
-		free(input);
+		// free(input);
 		
     }
-	free_mini(mini);
+	// free_mini(mini);
 	return (0);
 }
