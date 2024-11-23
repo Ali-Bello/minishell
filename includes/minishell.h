@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/22 23:43:15 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 20:03:22 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_expand
 	int				res_idx;
 	int				res_size;
 	int				quotes_flags[2];
+	bool			to_split;
 	bool			to_sort;
 	t_list			*idx_node;
 }					t_expand;
@@ -156,6 +157,7 @@ void				append_node(t_redir **redirection, t_redir *new);
 bool				innormal_var(t_expand *params);
 void				parser(t_list *list);
 void				print_ast(t_tree *node, int level);
+void				split_node(t_list *node);
 char				*get_varname(char *s, int *j);
 
 #endif

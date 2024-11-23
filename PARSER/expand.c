@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/21 16:42:35 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 20:07:50 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	expand_exit_status(t_expand *params)
 	params->i += 2;
 }
 
-void	expand_var(t_expand *params, t_list *node)
+void	expand_var(t_expand *params)
 {
 	char	*var_name;
 	char	*value;
@@ -51,7 +51,10 @@ void	expand_var(t_expand *params, t_list *node)
 	}
 	value = getenv(var_name);
 	if (!params->quotes_flags[0] && value)
-		append_words(node, params, value);
+	{
+		params->res = append_value(params, value);
+		params->to_split = true;
+	}
 	else if (value)
 		params->res = append_value(params, value);
 	else
@@ -86,8 +89,7 @@ void	expand_rm_quotes(t_list *node, char *s)
 
 	if (node->expand_flag)
 		return ;
-	ft_bzero(&params, sizeof(t_expand));
-	params.str = s;
+	(void)(ft_bzero(&params, sizeof(t_expand)), params.str = s);
 	while (s && s[params.i])
 	{
 		if (s[params.i] != '\'' && s[params.i] != '"' && s[params.i] != '$'
@@ -99,12 +101,13 @@ void	expand_rm_quotes(t_list *node, char *s)
 		else if (s[params.i] == '\'' || s[params.i] == '"')
 			set_quotes_flags(&params);
 		else if (s[params.i] == '$')
-			expand_var(&params, node);
+			expand_var(&params);
 		else if (s[params.i] == '*')
 			expand_wildcards(&params, node);
 	}
-	free(s);
-	node->s = params.res;
+	(void)(free(s), node->s = params.res);
+	if (params.to_split)
+		split_node(node);
 	if (params.to_sort)
 		sort_fnames(node, params.idx_node->next);
 }

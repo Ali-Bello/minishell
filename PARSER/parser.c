@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/21 16:43:34 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 20:08:46 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void	parser(t_list *list)
 			tmp[0] = tmp[0]->next;
 	}
 }
-/**
+// /**
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)

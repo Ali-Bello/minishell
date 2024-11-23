@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 03:13:26 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/20 11:48:54 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 16:33:07 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ void	parse_operators(t_list **list, char *s, int *i)
 {
 	int	token;
 
+	token = 0;
 	if (s[0] == '>')
 		token = APPEND * (s[1] && s[1] == '>') + REDIROUT * (!s[1]
 				|| s[1] != '>');
@@ -87,7 +88,7 @@ void	parse_operators(t_list **list, char *s, int *i)
 		token = AND;
 	else if (!s[1] || s[1] != '&')
 		return ;
-	add_node(list, new_node(ft_substr(s, 0, 1 + +(token == HEREDOC
+	add_node(list, new_node(ft_substr(s, 0, 1 +(token == HEREDOC
 					|| token == APPEND || token == OR || token == AND)),
 			token));
 	*i += (token == APPEND || token == HEREDOC || token == OR || token == AND);

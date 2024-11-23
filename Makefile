@@ -7,7 +7,7 @@ END			:=	\033[0m
 
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -lreadline -fsanitize=address -g3
+CFLAGS = -Wall -Werror -Wextra -fsanitize=address -g3
 # MAKEFLAGS += --no-print-directory
 # Directories
 OBJS_DIR = objs
@@ -15,7 +15,7 @@ OBJS_DIR = objs
 # Source files
 LEXER_SRCS = LEXER/lexer.c LEXER/node.c LEXER/utils.c
 PARSER_SRCS = PARSER/expand.c PARSER/expand_utils.c PARSER/parser.c PARSER/ft_free.c\
-			PARSER/tree.c PARSER/wildcard.c PARSER/wildcard_utils.c PARSER/extra_utils.c
+			PARSER/tree.c PARSER/wildcard.c PARSER/wildcard_utils.c PARSER/parser_utils.c
 SRCS = $(LEXER_SRCS) $(PARSER_SRCS)
 
 # Object files
@@ -32,7 +32,7 @@ LIBFT = $(LIBFTPATH)/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(OBJS) $(CFLAGS) $(LIBFT) -o $@
+	@$(CC) $(OBJS) $(CFLAGS) -lreadline $(LIBFT) -o $@
 	@printf "$(GREEN)$(BOLD)> $(NAME) made successfully.$(END)\n"
 
 $(OBJS_DIR)/%.o: %.c Makefile includes/minishell.h

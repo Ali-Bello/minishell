@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 23:03:53 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/23 02:47:35 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 17:40:10 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
  *	vars[1]: start;
  *	vars[2]: current array_size;
  *	vars[3]: current array_idx;
- */
+*/
 
 char	**add_word(char **words, char *s, int *vars)
 {
