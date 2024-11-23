@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/21 16:44:17 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/22 23:43:15 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,5 +156,6 @@ void				append_node(t_redir **redirection, t_redir *new);
 bool				innormal_var(t_expand *params);
 void				parser(t_list *list);
 void				print_ast(t_tree *node, int level);
+char				*get_varname(char *s, int *j);
 
 #endif
