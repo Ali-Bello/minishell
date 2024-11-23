@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/23 22:24:35 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 22:26:47 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,6 @@ int					cd_free(void *p, int f);
 
 /** EXECUTION FUNCTIONS **/
 
-// execution function
 int					execute_command(t_tree *root, t_mini *mini);
 int					execute_and(t_tree *root, t_mini *mini);
 int					execute_or(t_tree *root, t_mini *mini);
