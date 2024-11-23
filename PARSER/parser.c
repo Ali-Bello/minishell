@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/23 20:08:46 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 22:08:42 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ t_list	*get_args(t_list *list, t_cmd *data, int size)
 	return (list);
 }
 
-void	merge_nodes(t_list *list, t_redir *redirs)
+void	merge_words(t_list *list, t_redir *redirs)
 {
 	int	size;
 
@@ -74,7 +74,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 	free(list->next->s);
 	free(list->next);
 	list->next = NULL;
-	append_node(redirections, new);
+	append_redirection(redirections, new);
 	return (tmp);
 }
 
@@ -122,7 +122,7 @@ void	parser(t_list *list)
 			tmp[0] = tmp[0]->next;
 	}
 }
-// /**
+/**
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)

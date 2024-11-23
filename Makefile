@@ -19,6 +19,7 @@ PARSER_SRCS = PARSER/expand.c PARSER/expand_utils.c PARSER/expand_utils2.c PARSE
 EXECUTER_SRCS = BUILTIN/cd_f.c BUILTIN/echo_f.c BUILTIN/env_f.c BUILTIN/env_node.c BUILTIN/pwd_f.c BUILTIN/export_f.c BUILTIN/unset_f.c BUILTIN/utils.c BUILTIN/utils1.c BUILTIN/exit_f.c\
 				EXECUTION/exec.c EXECUTION/command_utils.c EXECUTION/error_utils.c EXECUTION/exec_utils.c EXECUTION/pipe_utils.c EXECUTION/redirections_utils.c\
 				main.c
+
 SRCS = $(LEXER_SRCS) $(PARSER_SRCS) $(EXECUTER_SRCS)
 
 # Object files
@@ -40,7 +41,7 @@ $(NAME): $(OBJS) $(LIBFT)
 
 $(OBJS_DIR)/%.o: %.c Makefile includes/minishell.h
 	@mkdir -p $(OBJS_DIR)
-	@mkdir -p $(OBJS_DIR)/LEXER $(OBJS_DIR)/PARSER
+	@mkdir -p $(OBJS_DIR)/LEXER $(OBJS_DIR)/PARSER $(OBJS_DIR)/BUILTIN $(OBJS_DIR)/EXECUTION
 	@$(CC) $(CFLAGS) -c $< -o $@ 
 	@printf "$(CYAN) > Compilation :$(END) $<\r"
 

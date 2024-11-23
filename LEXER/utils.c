@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/21 16:44:33 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/23 21:51:34 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_isspace(char c)
 	return (c == ' ' || (c <= 13 && c >= 9));
 }
 
-void	append_node(t_redir **redirection, t_redir *new)
+void	append_redirection(t_redir **redirection, t_redir *new)
 {
 	t_redir	*tmp;
 
