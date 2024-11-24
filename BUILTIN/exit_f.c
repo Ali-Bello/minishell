@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:52 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:50:10 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/24 18:11:10 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,37 +22,43 @@ int	count_args(char **args)
 	return (i);
 }
 
+/*
+	arg[0] >> i;
+	arg[1] >> num;
+	arg[2] >> space;
+	arg[3] >> sign;
+*/
 int	check_arg(char *s)
 {
-	static int	i;
-	static int	num;
-	static int	space;
-	static int	sign;
+	int	arg[4];
 
-	while (s[i])
+	ft_bzero(arg, sizeof(int) * 4);
+	while (s[arg[0]])
 	{
-		if (s[i] == '-' || s[i] == '+')
+		if (s[arg[0]] == '-' || s[arg[0]] == '+')
 		{
-			if (num)
+			if (arg[1])
 				return (0);
-			sign++;
+			arg[3]++;
 		}
-		if (!ft_isdigit(s[i]) && !ft_isspace(s[i]) && s[i] != '-'
-			&& s[i] != '+')
+		if (!ft_isdigit(s[arg[0]]) && !ft_isspace(s[arg[0]]) && s[arg[0]] != '-'
+			&& s[arg[0]] != '+')
 			return (1);
-		if (ft_isdigit(s[i]))
-			num = 1;
-		if (ft_isspace(s[i]) && num)
-			space = 1;
-		if ((space && ft_isdigit(s[i])) || sign > 1)
+		if (ft_isdigit(s[arg[0]]))
+			arg[1] = 1;
+		if (ft_isspace(s[arg[0]]) && arg[1])
+			arg[2] = 1;
+		if ((arg[2] && ft_isdigit(s[arg[0]])) || arg[3] > 1)
 			return (1);
-		i++;
+		arg[0]++;
 	}
 	return (0);
 }
 
-int	get_exit(char *s)
+int	get_exit(char *s, t_mini *mini)
 {
+	if (s == NULL)
+		return (mini->exit);
 	if (check_arg(s))
 	{
 		ft_putstr_fd("exit: ", 2);
@@ -61,8 +67,7 @@ int	get_exit(char *s)
 		exit(2);
 	}
 	else
-		exit(ft_atoi(s));
-	return (0);
+		return (ft_atoi(s));
 }
 
 int	exit_f(char **args, t_mini *mini)
@@ -72,6 +77,7 @@ int	exit_f(char **args, t_mini *mini)
 
 	count = count_args(args);
 	printf("%s\n", "exit");
+	status = get_exit(args[0], mini);
 	if (count > 1)
 	{
 		printf("minishell: exit: too many arguments\n");
@@ -79,16 +85,7 @@ int	exit_f(char **args, t_mini *mini)
 	}
 	else
 	{
-		if (count == 0)
-		{
-			printf("in exit == %d\n", mini->exit);
-			exit(mini->exit);
-			printf("in exit == %d\n", mini->exit);
-		}
-		else
-		{
-			status = get_exit(args[0]);
-			exit(status);
-		}
+		free_mini(mini);
+		exit(status);
 	}
 }

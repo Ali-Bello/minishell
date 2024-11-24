@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 07:21:23 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 18:05:08 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/23 20:08:26 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,35 +63,6 @@ char	*append_value(t_expand *params, char *value)
 	return (str);
 }
 
-void	append_words(t_list *node, t_expand *params, char *value)
-{
-	t_list	*tmp;
-	char	**s;
-	int		i;
-
-	if (node->amibiguous_redir)
-	{
-		params->res = append_value(params, value);
-		return ;
-	}
-	s = ft_split(value, ' ');
-	if (s && *s)
-		params->res = append_value(params, *s);
-	i = 1;
-	while (s && s[i])
-	{
-		tmp = node->next;
-		node->next = new_node(s[i], WORD);
-		if (ft_strchr(s[i], '\'') || ft_strchr(s[i], '"'))
-			node->next->expand_flag = 1;
-		node->next->next = tmp;
-		node = node->next;
-		i++;
-	}
-	free(*s);
-	free(s);
-}
-
 char	**extend_array(char **arr, char *new, int i, int *size)
 {
 	char	**new_arr;
@@ -116,4 +87,28 @@ char	**extend_array(char **arr, char *new, int i, int *size)
 	else
 		new_arr[i] = ft_strdup(new);
 	return (new_arr);
+}
+
+void	split_node(t_list *node)
+{
+	char	**nodes;
+	t_list	*tmp;
+	int		i;
+
+	tmp = node->next;
+	nodes = ft_split(node->s, ' ');
+	if (nodes && *nodes)
+	{
+		free(node->s);
+		node->s = ft_strdup(*nodes);
+		i = 1;
+		while (nodes[i])
+		{
+			node->next = new_node(ft_strdup(nodes[i]), WORD);
+			node = node->next;
+			i++;
+		}
+		node->next = tmp;
+	}
+	free_array(nodes);
 }

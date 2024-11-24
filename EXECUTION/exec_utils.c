@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:37 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/23 01:46:15 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/24 21:56:52 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	execute_command(t_tree *root, t_mini *mini)
 	int		status;
 	int		cmd_exit_status;
 	pid_t	pid;
-
+	
 	if (check_redirection(root, mini) == 1)
 		return (EXIT_FAILURE);
 	if (check_builtin(root, mini, &cmd_exit_status) == 1)
@@ -25,9 +25,10 @@ int	execute_command(t_tree *root, t_mini *mini)
 	pid = fork();
 	if (pid == 0)
 	{
+		signal(SIGINT, SIG_DFL);
 		if (join_command(root, &mini->env, &status) && status)
 			free_exit(mini, status * (status != 1));
-		if (execve(root->data.cmd, root->data.args, NULL) == -1)
+		if (execve(root->data.cmd, root->data.args, mini->char_env) == -1)
 			error_msg(root->data.cmd, mini, 127);
 	}
 	else if (pid > 0)

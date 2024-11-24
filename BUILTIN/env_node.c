@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:47 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:46:21 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/23 23:21:23 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,12 @@ void	del_env(t_env **env, char *var)
 				*env = tmp->next;
 			else
 				pre->next = tmp->next;
-			free(tmp->val);
-			free(tmp->var);
-			free(tmp);
+			if (tmp->val)
+				free(tmp->val);
+			if (tmp->var)
+				free(tmp->var);
+			if (tmp)
+				free(tmp);
 			return ;
 		}
 		pre = tmp;
@@ -86,8 +89,10 @@ void	free_env(t_env *env)
 
 	while (env)
 	{
-		free(env->val);
-		free(env->var);
+		if (env->val)
+			free(env->val);
+		if (env->var)
+			free(env->var);
 		tmp = env;
 		env = env->next;
 		if (tmp)

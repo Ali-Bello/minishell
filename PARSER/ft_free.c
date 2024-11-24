@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:59:22 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/18 15:11:55 by marvin           ###   ########.fr       */
+/*   Updated: 2024/11/24 17:35:30 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,11 @@ void	free_data(t_cmd *data)
 	int		i;
 
 	i = 0;
+	if (data->cmd)
+	{
+		free (data->cmd);
+		data->cmd = NULL;
+	}
 	while (data->args && data->args[i])
 	{
 		free(data->args[i]);

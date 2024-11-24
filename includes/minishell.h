@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 22:45:57 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/23 01:16:16 by anamella         ###   ########.fr       */
+/*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
+/*   Updated: 2024/11/24 18:22:53 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,20 @@
 
 # include "../libft/libft.h"
 # include <dirent.h>
-# include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
+# include <fcntl.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <signal.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
 # define GREEN "\x1b[32m"
-
 # define BLUE "\x1b[34m"
 # define YELLOW "\x1b[33m"
 # define MAGENTA "\x1b[35m"
@@ -106,6 +105,7 @@ typedef struct s_expand
 	int				res_idx;
 	int				res_size;
 	int				quotes_flags[2];
+	bool			to_split;
 	bool			to_sort;
 	t_list			*idx_node;
 }					t_expand;
@@ -138,48 +138,72 @@ typedef struct s_tree
 	struct s_tree	*right;
 }					t_tree;
 
+/** STRUCTURES FUNCTIONS **/
+
 t_list				*new_node(char *s, int type);
 void				add_node(t_list **node, t_list *new_node);
+t_list				*insert_node(t_list *start, t_list *new_node);
+void				free_tree(t_tree *tree);
+void				free_array(char **arr);
+void				free_list(t_list *list);
+void				print_list(t_list *list);
+void				print_ast(t_tree *node, int level);
 
-void				expand_rm_quotes(t_list *node, char *s);
-void				append_words(t_list *node, t_expand *params, char *value);
+/**************************/
+
+/** LEXER FUNCTIONS **/
+
 void				parse_operators(t_list **list, char *s, int *i);
 void				parse_words(t_list **list, char *s, int *i);
 void				parse_quotes(char *s, int *i);
-void				expand_wildcards(t_expand *params, t_list *node);
-char				*extend_string(t_expand *params);
 t_list				*lexer(char *s);
 int					ft_isspace(char c);
 int					is_operator(char c);
-char				*append_value(t_expand *params, char *value);
 
-char				*get_pattern(t_expand *params);
-void				add_match(t_wildcard *rules, char *str);
-void				print_list(t_list *list);
-t_tree				*convert_to_ast(t_list *list);
-void				free_list(t_list *list);
-void				free_tree(t_tree *tree);
-char				**extend_array(char **arr, char *new, int i, int *size);
-int					get_args_count(t_list *list);
-void				free_array(char **arr);
-void				match_patterns(t_expand *params, t_wildcard *specs);
-char				*get_segment(char *s, int *idx, int len);
-void				set_segments(t_wildcard *rules);
-void				swap_strings(t_list *a, t_list *b);
-void				final_touches(t_wildcard *rules);
-t_list				*insert_node(t_list *start, t_list *new_node);
-void				sort_fnames(t_list *start, t_list *end);
-char				*construct_filename(t_wildcard *rules, char *s);
+/*********************/
+
+/** PARSER FUNCTIONS **/
+
 void				set_position(t_tree *stats[]);
-void				arrange_nodes(t_list *list[3], t_redir *redirections);
-void				merge_nodes(t_list *list, t_redir *redirs);
+t_tree				*convert_to_ast(t_list *list);
+void				parser(t_list *list);
 t_list				*get_redirections(t_list *list, t_list *current,
 						t_redir **redirect);
-void				parser(t_list *list);
-void				print_ast(t_tree *node, int level);
-void				set_redirections(t_list *node, t_list *last_parenthesis);
+void				append_redirection(t_redir **redirection, t_redir *new);
+int					get_args_count(t_list *list);
+char				**extend_array(char **arr, char *new, int i, int *size);
+void				merge_words(t_list *list, t_redir *redirs);
+void				arrange_nodes(t_list *list[3], t_redir **redirections);
 
-// env and builtin function
+	/*-- EXPANDER FUNCTIONS --*/
+
+void				expand_rm_quotes(t_list *node, char *s);
+char				*extend_string(t_expand *params);
+char				*append_value(t_expand *params, char *value);
+
+		/**--__ env variables functions __--**/
+
+void				expand_exit_status(t_expand *params);
+char				*get_varname(char *s, int *j);
+bool				innormal_var(t_expand *params);
+void				split_node(t_list *node);
+
+		/**--__wildcard functions__--**/
+
+void				expand_wildcards(t_expand *params, t_list *node);
+char				*get_pattern(t_expand *params);
+void				add_match(t_wildcard *rules, char *str);
+char				*construct_filename(t_wildcard *rules, char *s);
+char				*get_segment(char *s, int *idx, int len);
+void				set_segments(t_wildcard *rules);
+void				sort_fnames(t_list *start, t_list *end);
+void				swap_strings(t_list *a, t_list *b);
+void				final_touches(t_wildcard *rules);
+
+/**********************/
+
+/** ENV AND BUILTINS FUNCTIONS **/
+
 t_env				*create_env(char **env);
 t_env				*new_env(char *s, int *status);
 int					add_env(t_env **env, t_env *new_env);
@@ -197,9 +221,11 @@ int					cd_f(char **path, t_mini *mini);
 int					pwd_f(char **args, t_mini *mini);
 int					exit_f(char **args, t_mini *mini);
 int					cd_free(void *p, int f);
-// end of env and builtin funcion
 
-// execution function
+/********************************/
+
+/** EXECUTION FUNCTIONS **/
+
 int					execute_command(t_tree *root, t_mini *mini);
 int					execute_and(t_tree *root, t_mini *mini);
 int					execute_or(t_tree *root, t_mini *mini);
@@ -220,11 +246,20 @@ int					end_of_pipe(pid_t pid_left, pid_t pid_right, int *pipefd);
 int					close_fd(int fd1, int fd2);
 int					redirections_type(t_redir *redirections, t_mini *mini);
 int					check_redirection(t_tree *root, t_mini *mini);
-int					count_env(t_env *tmp);
-char				**create_char_env(t_env *env);
+char				**count_env(t_env *env);
+void				create_char_env(char **ev, t_env *env);
+char				**convert_env(t_env *env);
+void				free_char_env(char **env);
 int					heredoc(const char *delimiter, t_mini *mini);
 int					execute_ast(t_tree *root, t_mini *mini);
 void				child_process1(t_tree *root, int *pipefd, t_mini *mini);
 void				child_process2(t_tree *root, int *pipefd, t_mini *mini);
-// end of execution function
+void				free_mini(t_mini *mini);
+t_mini				*create_mini(char **env);
+void				free_and_reset(t_mini *mini);
+void				read_heredoc(t_tree *root, t_mini *mini);
+void				reset_fd(int fd_in, int fd_out);
+
+/*************************/
+
 #endif
