@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:14 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:45:15 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/24 20:59:20 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ char	*get_var(char *s, int *status)
 			return (ft_strndup(s, i));
 		i++;
 	}
+	if (s)
+		return (ft_strndup(s, i));
 	return (NULL);
 }
 
@@ -83,13 +85,21 @@ int	set_env(char *var, char *val, t_env **env)
 	tmp = *env;
 	while (tmp)
 	{
-		if (ft_strncmp(var, tmp->var, ft_strlen(var)) == 0)
+		if (!ft_strcmp(var, tmp->var))
 		{
-			free(tmp->val);
-			tmp->val = ft_strdup(val);
+			if (tmp->var)
+				free(tmp->var);
+			tmp->var = var;
+			if (tmp->val)
+				free(tmp->val);
+			tmp->val = val;
 			return (0);
 		}
 		tmp = tmp->next;
 	}
+	if (val)
+		free(val);
+	if (var)
+		free(var);
 	return (1);
 }

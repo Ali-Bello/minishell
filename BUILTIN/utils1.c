@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:19 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:45:20 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/24 20:53:13 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ t_env	*create_env(char **env)
 
 char	*get_env(char *name, t_env *env)
 {
+	if (!name)
+		return (NULL);
 	while (env)
 	{
 		if (!ft_strcmp(name, env->var))

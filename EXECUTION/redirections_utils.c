@@ -6,11 +6,25 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:50 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/23 01:56:05 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/24 21:05:31 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+/*
+else if (redirections->mode == REDIRIN)
+	{
+		if (redirections->amibiguous_redir == 1)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(redirections->file, 2);
+			ft_putstr_fd("ambiguous redirect\n", 2);
+			return (-1);
+		}
+		fd = open(redirections->file, O_RDONLY);
+	}
+*/
 
 int	redirections_type(t_redir *redirections, t_mini *mini)
 {
@@ -28,6 +42,14 @@ int	redirections_type(t_redir *redirections, t_mini *mini)
 		fd = redirections->fd;
 	return (fd);
 }
+/*
+if (fd == -1)
+{
+	if (redirections->amibiguous_redir == 0)
+		perror(redirections->file);
+	return (1);
+}
+*/
 
 int	check_redirection(t_tree *root, t_mini *mini)
 {
@@ -57,43 +79,25 @@ int	check_redirection(t_tree *root, t_mini *mini)
 	return (0);
 }
 
-int	count_env(t_env *tmp)
+void	read_heredoc(t_tree *root, t_mini *mini)
 {
-	int	count;
+	t_redir	*red;
 
-	count = 0;
-	while (tmp)
+	if (root == NULL)
+		return ;
+	red = root->data.redirections;
+	while (red)
 	{
-		count++;
-		tmp = tmp->next;
+		if (red->mode == HEREDOC)
+			red->fd = heredoc(red->file, mini);
+		red = red->next;
 	}
-	return (count);
+	read_heredoc(root->left, mini);
+	read_heredoc(root->right, mini);
 }
 
-char	**create_char_env(t_env *env)
+void	reset_fd(int fd_in, int fd_out)
 {
-	int		i;
-	int		count;
-	char	**ev;
-	char	*c_tmp;
-	t_env	*tmp;
-
-	count = count_env(env);
-	if (count == 0)
-		return (NULL);
-	ev = (char **)malloc(sizeof(char *) * (count + 1));
-	if (!ev)
-		return (perror("malloc"), NULL);
-	tmp = env;
-	i = 0;
-	while (tmp)
-	{
-		ev[i] = ft_strjoin(tmp->var, "=");
-		c_tmp = ev[i];
-		ev[i] = ft_strjoin(c_tmp, tmp->val);
-		free(c_tmp);
-		i++;
-		tmp = tmp->next;
-	}
-	return (ev[i] = NULL, ev);
+	dup2(fd_in, 0);
+	dup2(fd_out, 1);
 }

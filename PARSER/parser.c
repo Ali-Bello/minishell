@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/23 22:08:42 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/24 00:33:52 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	merge_words(t_list *list, t_redir *redirs)
 	if (list->s && size)
 	{
 		list->data.cmd = ft_strdup(list->s);
-		list->data.args[0] = list->data.cmd;
+		list->data.args[0] = ft_strdup(list->data.cmd);
 		if (!list->data.cmd)
 			return ;
 	}

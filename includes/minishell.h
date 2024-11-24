@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/23 22:26:47 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/24 18:22:53 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <signal.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
@@ -137,7 +138,6 @@ typedef struct s_tree
 	struct s_tree	*right;
 }					t_tree;
 
-
 /** STRUCTURES FUNCTIONS **/
 
 t_list				*new_node(char *s, int type);
@@ -246,12 +246,19 @@ int					end_of_pipe(pid_t pid_left, pid_t pid_right, int *pipefd);
 int					close_fd(int fd1, int fd2);
 int					redirections_type(t_redir *redirections, t_mini *mini);
 int					check_redirection(t_tree *root, t_mini *mini);
-int					count_env(t_env *tmp);
-char				**create_char_env(t_env *env);
+char				**count_env(t_env *env);
+void				create_char_env(char **ev, t_env *env);
+char				**convert_env(t_env *env);
+void				free_char_env(char **env);
 int					heredoc(const char *delimiter, t_mini *mini);
 int					execute_ast(t_tree *root, t_mini *mini);
 void				child_process1(t_tree *root, int *pipefd, t_mini *mini);
 void				child_process2(t_tree *root, int *pipefd, t_mini *mini);
+void				free_mini(t_mini *mini);
+t_mini				*create_mini(char **env);
+void				free_and_reset(t_mini *mini);
+void				read_heredoc(t_tree *root, t_mini *mini);
+void				reset_fd(int fd_in, int fd_out);
 
 /*************************/
 
