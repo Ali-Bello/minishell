@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/24 21:54:21 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/25 01:03:08 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ int	main(int ac, char **av, char **ev)
 {
 	t_mini	*mini;
 	int		exit_statu;
-	
+
+	printf("parent == %d\n", getpid());
 	(void)ac;
 	(void)av;
-
 	signal(SIGINT, sig_hand);
 	mini = create_mini(ev);
 	get_input(mini);

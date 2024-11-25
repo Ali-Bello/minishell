@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:27 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/22 22:44:29 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/25 00:40:22 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ static void	set_wd(char *wd, t_env **env)
 	char	*tmp;
 
 	tmp = ft_strjoin("OLDPWD=", wd);
-	if (set_env("OLDPWD", wd, env))
+	if (set_env(ft_strdup("OLDPWD"), ft_strdup(wd), env))
 		add_env(env, new_env(tmp, (int *)0));
 	cd_free(tmp, 1);
 	cd_free(wd, 1);
 	wd = getcwd(NULL, 0);
 	tmp = ft_strjoin("PWD=", wd);
-	if (set_env("PWD", wd, env))
+	if (set_env(ft_strdup("PWD"), ft_strdup(wd), env))
 		add_env(env, new_env(tmp, (int *)0));
 	cd_free(tmp, 1);
 	cd_free(wd, 1);

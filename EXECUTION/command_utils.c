@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:26 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/24 17:37:03 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/25 02:06:11 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ int	join_command(t_tree *root, t_env **env, int *status)
 		cmd_path = path_join(path[i], root->data.cmd);
 		if (access(cmd_path, F_OK) == 0)
 		{
-			free(root->data.cmd);
 			root->data.cmd = cmd_path;
 			return (free_(path), 0);
 		}
