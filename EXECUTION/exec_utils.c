@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:37 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/24 21:56:52 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/25 01:39:43 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	execute_command(t_tree *root, t_mini *mini)
 	int		status;
 	int		cmd_exit_status;
 	pid_t	pid;
-	
+
 	if (check_redirection(root, mini) == 1)
 		return (EXIT_FAILURE);
 	if (check_builtin(root, mini, &cmd_exit_status) == 1)

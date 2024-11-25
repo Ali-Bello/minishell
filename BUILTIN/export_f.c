@@ -6,13 +6,13 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:57 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/24 20:52:03 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/25 00:49:56 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int check_var(char *name, t_env *env)
+int	check_var(char *name, t_env *env)
 {
 	while (env)
 	{
@@ -27,6 +27,7 @@ int check_var(char *name, t_env *env)
 	}
 	return (0);
 }
+
 // get_env(get_var(env[i], &status), *env_l)
 int	export_f(char **env, t_mini *mini)
 {
