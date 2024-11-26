@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/26 16:28:42 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/26 21:43:03 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ char	*get_varname(char *s, int *j)
 	return (ft_substr(s, 0, i));
 }
 
-void	expand_exit_status(t_expand *params)
+void	expand_exit_status(t_expand *params, int exit_status)
 {
 	char	*value;
 
-	value = ft_itoa(g_global_exit);
+	value = ft_itoa(exit_status);
 	params->res = append_value(params, value);
 	if (!params->res)
 		return ;
@@ -35,12 +35,12 @@ void	expand_exit_status(t_expand *params)
 	params->i += 2;
 }
 
-void	expand_var(t_expand *params)
+void	expand_var(t_expand *params, t_mini *mini)
 {
 	char	*var_name;
 	char	*value;
 
-	if (innormal_var(params) == true)
+	if (innormal_var(params, mini) == true)
 		return ;
 	var_name = get_varname(&params->str[params->i + 1], &params->i);
 	if (var_name && !var_name[0])
@@ -49,7 +49,7 @@ void	expand_var(t_expand *params)
 		free(var_name);
 		return ;
 	}
-	value = getenv(var_name);
+	value = get_env(var_name, mini->env);
 	if (!params->quotes_flags[0] && value)
 	{
 		params->res = append_value(params, value);
@@ -83,7 +83,7 @@ void	set_quotes_flags(t_expand *params)
 	params->i++;
 }
 
-void	expand_rm_quotes(t_list *node, char *s)
+void	expand_rm_quotes(t_list *node, char *s, t_mini *mini)
 {
 	t_expand	params;
 
@@ -101,7 +101,7 @@ void	expand_rm_quotes(t_list *node, char *s)
 		else if (s[params.i] == '\'' || s[params.i] == '"')
 			set_quotes_flags(&params);
 		else if (s[params.i] == '$')
-			expand_var(&params);
+			expand_var(&params, mini);
 		else if (s[params.i] == '*')
 			expand_wildcards(&params, node);
 	}

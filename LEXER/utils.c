@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 07:15:04 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/23 21:51:34 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/26 21:41:56 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	append_redirection(t_redir **redirection, t_redir *new)
 		*redirection = new;
 }
 
-bool	innormal_var(t_expand *params)
+bool	innormal_var(t_expand *params, t_mini *mini)
 {
 	if (params->quotes_flags[1] || !params->str[params->i + 1])
 	{
@@ -47,7 +47,7 @@ bool	innormal_var(t_expand *params)
 	}
 	if (params->str[params->i + 1] == '?')
 	{
-		expand_exit_status(params);
+		expand_exit_status(params, mini->exit);
 		return (true);
 	}
 	return (false);

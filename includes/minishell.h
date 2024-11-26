@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/26 20:39:34 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/26 21:48:44 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 
 # include "../libft/libft.h"
 # include <dirent.h>
+# include <errno.h>
+# include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <fcntl.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <signal.h>
-# include <errno.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
@@ -39,7 +39,7 @@
 # define ITALIC "\x1b[3m"
 # define UNDERLINE "\x1b[4m"
 
-extern int	g_global_exit;
+extern int			g_global_exit;
 
 typedef struct s_mini
 {
@@ -156,6 +156,10 @@ void				print_ast(t_tree *node, int level);
 
 /** LEXER FUNCTIONS **/
 
+bool				syntax_check(char *input);
+void				check_repeating_operators(char *input, int i, char c,
+						bool *valid);
+void				check_pipes(char *input, int i, bool *valid);
 void				parse_operators(t_list **list, char *s, int *i);
 void				parse_words(t_list **list, char *s, int *i);
 void				parse_quotes(char *s, int *i);
@@ -167,32 +171,32 @@ int					is_operator(char c);
 
 /** PARSER FUNCTIONS **/
 
+void				parser(t_list *list, t_mini *mini);
 void				set_position(t_tree *stats[]);
 t_tree				*convert_to_ast(t_list *list);
-void				parser(t_list *list);
 t_list				*get_redirections(t_list *list, t_list *current,
-						t_redir **redirect);
+						t_redir **redirect, t_mini *mini);
 void				append_redirection(t_redir **redirection, t_redir *new);
 int					get_args_count(t_list *list);
 char				**extend_array(char **arr, char *new, int i, int *size);
-void				merge_words(t_list *list, t_redir *redirs);
-void				arrange_nodes(t_list *list[3], t_redir **redirections);
+void				merge_words(t_list *list, t_redir *redirs, t_mini *mini);
+void				arrange_nodes(t_list *list[3], t_redir **redirections,
+						t_mini *mini);
 
-	/*-- EXPANDER FUNCTIONS --*/
+/*-- EXPANDER FUNCTIONS --*/
 
-void				expand_rm_quotes(t_list *node, char *s);
+void				expand_rm_quotes(t_list *node, char *s, t_mini *mini);
 char				*extend_string(t_expand *params);
 char				*append_value(t_expand *params, char *value);
 char				*expand_in_heredoc(char *input);
+/**--__ env variables functions __--**/
 
-		/**--__ env variables functions __--**/
-
-void				expand_exit_status(t_expand *params);
+void				expand_exit_status(t_expand *params, int exit_status);
 char				*get_varname(char *s, int *j);
-bool				innormal_var(t_expand *params);
+bool				innormal_var(t_expand *params, t_mini *mini);
 void				split_node(t_list *node);
 
-		/**--__wildcard functions__--**/
+/**--__wildcard functions__--**/
 
 void				expand_wildcards(t_expand *params, t_list *node);
 char				*get_pattern(t_expand *params);
