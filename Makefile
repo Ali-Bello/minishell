@@ -7,7 +7,7 @@ END			:=	\033[0m
 
 # Compiler and flags
 CC = cc
-CFLAGS = -Wall -Werror -Wextra  -g #-fsanitize=address -g3
+CFLAGS = -Wall -Werror -Wextra  -g -fsanitize=address -g3
 # MAKEFLAGS += --no-print-directory
 # Directories
 OBJS_DIR = objs

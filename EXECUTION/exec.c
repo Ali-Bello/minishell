@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:42 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/24 00:47:01 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/26 20:40:11 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	heredoc(const char *delimiter, t_mini *mini)
 			free(line);
 			break ;
 		}
+		line = expand_in_heredoc(line);
 		write(fd[1], line, strlen(line));
 		write(fd[1], "\n", 1);
 		free(line);
@@ -68,6 +69,6 @@ int	execute_ast(t_tree *root, t_mini *mini)
 	else if (root->type == OR)
 		return (execute_or(root, mini));
 	if (root->type == PARENTHESIS)
-		execute_parenthesis(root, mini);
+		return (execute_parenthesis(root, mini));
 	return (0);
 }

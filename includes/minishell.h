@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/24 18:22:53 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/26 20:39:34 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 # include <signal.h>
+# include <errno.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
@@ -37,6 +38,8 @@
 # define BOLD "\x1b[1m"
 # define ITALIC "\x1b[3m"
 # define UNDERLINE "\x1b[4m"
+
+extern int	g_global_exit;
 
 typedef struct s_mini
 {
@@ -180,6 +183,7 @@ void				arrange_nodes(t_list *list[3], t_redir **redirections);
 void				expand_rm_quotes(t_list *node, char *s);
 char				*extend_string(t_expand *params);
 char				*append_value(t_expand *params, char *value);
+char				*expand_in_heredoc(char *input);
 
 		/**--__ env variables functions __--**/
 
@@ -259,6 +263,8 @@ t_mini				*create_mini(char **env);
 void				free_and_reset(t_mini *mini);
 void				read_heredoc(t_tree *root, t_mini *mini);
 void				reset_fd(int fd_in, int fd_out);
+void				sig_hand(int sig);
+int					get_exit_status(int pid);
 
 /*************************/
 

@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:26 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/25 02:06:11 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/26 19:48:03 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,22 @@ int	check_path(char *cmd, int *status)
 {
 	if (ft_strchr(cmd, '/'))
 	{
+		ft_putstr_fd("hello1\n", 2);
 		if (access(cmd, F_OK) == -1)
 		{
+			ft_putstr_fd("hello2\n", 2);
 			perror(cmd);
 			*status = 127;
 			return (1);
 		}
 		if (access(cmd, F_OK | X_OK) != 0)
 		{
+			ft_putstr_fd("hello3\n", 2);
 			perror(cmd);
 			*status = 126;
 			return (1);
 		}
+		ft_putstr_fd("hello4\n", 2);
 		*status = 0;
 		return (1);
 	}
@@ -96,4 +100,16 @@ int	check_builtin(t_tree *root, t_mini *mini, int *exit)
 	}
 	*exit = 0;
 	return (0);
+}
+
+int	get_exit_status(int pid)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	if (WEXITSTATUS(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (status);
 }

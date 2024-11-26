@@ -6,11 +6,13 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/25 01:03:08 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/26 20:45:32 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
+
+int	g_global_exit = 0;
 
 void	sig_hand(int sig)
 {
@@ -19,6 +21,7 @@ void	sig_hand(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+	g_global_exit = 130;
 }
 
 void	get_input(t_mini *mini)
@@ -27,6 +30,7 @@ void	get_input(t_mini *mini)
 
 	while (1)
 	{
+		signal(SIGINT, sig_hand);
 		input = readline(BLUE "mminishell$ " RESET);
 		add_history(input);
 		if (!input)
@@ -37,7 +41,7 @@ void	get_input(t_mini *mini)
 		mini->root = convert_to_ast(mini->list);
 		read_heredoc(mini->root, mini);
 		mini->char_env = convert_env(mini->env);
-		mini->exit = execute_ast(mini->root, mini);
+		g_global_exit = execute_ast(mini->root, mini);
 		free_and_reset(mini);
 	}
 	clear_history();
@@ -48,10 +52,9 @@ int	main(int ac, char **av, char **ev)
 	t_mini	*mini;
 	int		exit_statu;
 
-	printf("parent == %d\n", getpid());
 	(void)ac;
 	(void)av;
-	signal(SIGINT, sig_hand);
+	signal(SIGQUIT, SIG_IGN);
 	mini = create_mini(ev);
 	get_input(mini);
 	exit_statu = mini->exit;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/23 20:07:50 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/26 16:28:42 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	expand_exit_status(t_expand *params)
 {
 	char	*value;
 
-	value = ft_itoa(EXIT_STATUS);
+	value = ft_itoa(g_global_exit);
 	params->res = append_value(params, value);
 	if (!params->res)
 		return ;
