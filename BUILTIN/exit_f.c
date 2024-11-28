@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_f.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:52 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/26 18:04:48 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/28 23:50:04 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	exit_f(char **args, t_mini *mini)
 	status = get_exit(args[0], mini);
 	if (count > 1)
 	{
-		printf("minishell: exit: too many arguments\n");
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 		return (1);
 	}
 	else
