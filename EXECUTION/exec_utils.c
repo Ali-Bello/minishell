@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:37 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/26 18:03:31 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/28 19:46:20 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	execute_and(t_tree *root, t_mini *mini)
 	int	status_left;
 
 	status_left = execute_ast(root->left, mini);
+	reset_fd(mini->infd, mini->outfd);
 	if (status_left == 0)
 		return (execute_ast(root->right, mini));
 	else
@@ -54,6 +55,7 @@ int	execute_or(t_tree *root, t_mini *mini)
 	int	status_left;
 
 	status_left = execute_ast(root->left, mini);
+	reset_fd(mini->infd, mini->outfd);
 	if (status_left != 0)
 		return (execute_ast(root->right, mini));
 	else

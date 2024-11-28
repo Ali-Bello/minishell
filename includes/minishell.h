@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/27 22:04:14 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/28 19:43:56 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <sys/stat.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
@@ -212,12 +213,12 @@ void				final_touches(t_wildcard *rules);
 /** ENV AND BUILTINS FUNCTIONS **/
 
 t_env				*create_env(char **env);
-t_env				*new_env(char *s, int *status);
+t_env				*new_env(char *var, char *val);
 int					add_env(t_env **env, t_env *new_env);
 void				del_env(t_env **env, char *var);
 void				free_env(t_env *env);
-char				*get_val(char *s, int *status);
-char				*get_var(char *s, int *status);
+char				*get_val(char *s);
+char				*get_var(char *s);
 char				*get_env(char *name, t_env *env);
 int					set_env(char *var, char *val, t_env **env);
 int					export_f(char **env, t_mini *mini);
@@ -264,10 +265,11 @@ void				child_process2(t_tree *root, int *pipefd, t_mini *mini);
 void				free_mini(t_mini *mini);
 t_mini				*create_mini(char **env);
 void				free_and_reset(t_mini *mini);
-void				read_heredoc(t_tree *root, t_mini *mini);
+int					read_heredoc(t_tree *root, t_mini *mini);
 void				reset_fd(int fd_in, int fd_out);
 void				sig_hand(int sig);
 int					get_exit_status(int pid);
+void				free_heredoc(char *line, t_mini *mini);
 
 /*************************/
 
