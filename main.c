@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/26 21:49:20 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/28 00:42:12 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,26 +24,33 @@ void	sig_hand(int sig)
 	g_global_exit = 130;
 }
 
-void	get_input(t_mini *mini)
+void	get_input(int ac, char** av,t_mini *mini)
 {
 	char	*input;
 
-	while (1)
+	while (ac | **av)
 	{
 		signal(SIGINT, sig_hand);
 		input = readline(BLUE "mminishell$ " RESET);
 		add_history(input);
 		if (!input)
-			break ;
-		if (syntax_check(input) == false)
 		{
 			free(input);
-			continue ;
+			break ;
 		}
 		mini->list = lexer(input);
+		if (check_syntax_errors(mini->list))
+		{
+			free(input);
+			free_list(mini->list);
+			mini->list = NULL;
+			continue ;
+		}
 		free(input);
-		parser(mini->list, mini);
+		parser(mini->list, mini->env);
 		mini->root = convert_to_ast(mini->list);
+		flush_list(mini->list);
+		mini->list = NULL;
 		read_heredoc(mini->root, mini);
 		mini->char_env = convert_env(mini->env);
 		g_global_exit = execute_ast(mini->root, mini);
@@ -55,15 +62,13 @@ void	get_input(t_mini *mini)
 int	main(int ac, char **av, char **ev)
 {
 	t_mini	*mini;
-	int		exit_statu;
+	int		exit_status;
 
-	(void)ac;
-	(void)av;
 	signal(SIGQUIT, SIG_IGN);
 	mini = create_mini(ev);
-	get_input(mini);
-	exit_statu = mini->exit;
+	get_input(ac,av,mini);
+	exit_status = mini->exit;
 	free_mini(mini);
-	exit(exit_statu);
+	exit(exit_status);
 	return (0);
 }

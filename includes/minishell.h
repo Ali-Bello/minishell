@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/26 21:48:44 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/27 22:04:14 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ t_list				*insert_node(t_list *start, t_list *new_node);
 void				free_tree(t_tree *tree);
 void				free_array(char **arr);
 void				free_list(t_list *list);
+void				flush_list(t_list *list);
 void				print_list(t_list *list);
 void				print_ast(t_tree *node, int level);
 
@@ -156,10 +157,8 @@ void				print_ast(t_tree *node, int level);
 
 /** LEXER FUNCTIONS **/
 
-bool				syntax_check(char *input);
-void				check_repeating_operators(char *input, int i, char c,
-						bool *valid);
-void				check_pipes(char *input, int i, bool *valid);
+bool				check_syntax_errors(t_list *list);
+void				report_error(char *token, int flag);
 void				parse_operators(t_list **list, char *s, int *i);
 void				parse_words(t_list **list, char *s, int *i);
 void				parse_quotes(char *s, int *i);
@@ -171,21 +170,21 @@ int					is_operator(char c);
 
 /** PARSER FUNCTIONS **/
 
-void				parser(t_list *list, t_mini *mini);
+void				parser(t_list *list, t_env *env);
 void				set_position(t_tree *stats[]);
 t_tree				*convert_to_ast(t_list *list);
 t_list				*get_redirections(t_list *list, t_list *current,
-						t_redir **redirect, t_mini *mini);
+						t_redir **redirect, t_env *env);
 void				append_redirection(t_redir **redirection, t_redir *new);
 int					get_args_count(t_list *list);
 char				**extend_array(char **arr, char *new, int i, int *size);
-void				merge_words(t_list *list, t_redir *redirs, t_mini *mini);
+void				merge_words(t_list *list, t_redir *redirs, t_env *env);
 void				arrange_nodes(t_list *list[3], t_redir **redirections,
-						t_mini *mini);
+						t_env *env);
 
 /*-- EXPANDER FUNCTIONS --*/
 
-void				expand_rm_quotes(t_list *node, char *s, t_mini *mini);
+void				expand_rm_quotes(t_list *node, char *s, t_env *mini);
 char				*extend_string(t_expand *params);
 char				*append_value(t_expand *params, char *value);
 char				*expand_in_heredoc(char *input);
@@ -193,7 +192,7 @@ char				*expand_in_heredoc(char *input);
 
 void				expand_exit_status(t_expand *params, int exit_status);
 char				*get_varname(char *s, int *j);
-bool				innormal_var(t_expand *params, t_mini *mini);
+bool				innormal_var(t_expand *params);
 void				split_node(t_list *node);
 
 /**--__wildcard functions__--**/

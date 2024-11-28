@@ -6,23 +6,27 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/26 21:50:05 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/28 00:42:51 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_list	*get_args(t_list *list, t_cmd *data, int size, t_mini *mini)
+t_list	*get_args(t_list *list, t_cmd *data, int size, t_env *env)
 {
 	int		i;
 	t_list	*tmp;
 
 	i = 1;
-	while (list && list->type == WORD)
+	while (list && list->type != PIPE && list->type != AND && list->type != OR
+		&& list->type != PARENTHESIS)
 	{
-		expand_rm_quotes(list, list->s, mini);
-		if (list->s && data->args)
-			data->args = extend_array(data->args, list->s, i++, &size);
+		if (list->type == WORD)
+		{
+			expand_rm_quotes(list, list->s, env);
+			if (list->s && data->args)
+				data->args = extend_array(data->args, list->s, i++, &size);
+		}
 		tmp = list;
 		list = list->next;
 		free(tmp->s);
@@ -31,12 +35,12 @@ t_list	*get_args(t_list *list, t_cmd *data, int size, t_mini *mini)
 	return (list);
 }
 
-void	merge_words(t_list *list, t_redir *redirs, t_mini *mini)
+void	merge_words(t_list *list, t_redir *redirs, t_env *env)
 {
 	int	size;
 
 	if (list->type == WORD)
-		expand_rm_quotes(list, list->s, mini);
+		expand_rm_quotes(list, list->s, env);
 	size = get_args_count(list);
 	if (size)
 	{
@@ -53,7 +57,7 @@ void	merge_words(t_list *list, t_redir *redirs, t_mini *mini)
 	}
 	list->data.redirections = redirs;
 	list->type = CMD;
-	list->next = get_args(list->next, &list->data, size, mini);
+	list->next = get_args(list->next, &list->data, size, env);
 }
 
 t_list	*add_redir_node(t_redir **redirections, t_list *list)
@@ -79,7 +83,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 }
 
 t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect,
-							t_mini *mini)
+							t_env *env)
 {
 	t_list	*replace;
 
@@ -91,7 +95,7 @@ t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect,
 				|| list->type == APPEND || list->type == HEREDOC))
 		{
 			if (list->type != HEREDOC && list->next)
-				expand_rm_quotes(list->next, list->next->s, mini);
+				expand_rm_quotes(list->next, list->next->s, env);
 			if (list->next == current)
 			{
 				replace = add_redir_node(redirect, list);
@@ -107,7 +111,7 @@ t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect,
 	return (replace);
 }
 
-void	parser(t_list *list, t_mini *mini)
+void	parser(t_list *list, t_env *env)
 {
 	t_list	*tmp[3];
 	t_redir	*redirections;
@@ -118,12 +122,12 @@ void	parser(t_list *list, t_mini *mini)
 	tmp[2] = NULL;
 	while (tmp[0])
 	{
-		arrange_nodes(tmp, &redirections, mini);
+		arrange_nodes(tmp, &redirections, env);
 		if (tmp[0])
 			tmp[0] = tmp[0]->next;
 	}
 }
-/**
+// /**
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
@@ -208,7 +212,7 @@ void	print_ast(t_tree *node, int level)
 		print_ast(node->right, level + 1);
 	}
 }
-
+/** 
 int	main(void)
 {
 	char	*buf;
