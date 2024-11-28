@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:50 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/24 21:05:31 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/28 19:43:10 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,13 @@ else if (redirections->mode == REDIRIN)
 		fd = open(redirections->file, O_RDONLY);
 	}
 */
+
+void	free_heredoc(char *line, t_mini *mini)
+{
+	free(line);
+	free_mini(mini);
+	exit(0);
+}
 
 int	redirections_type(t_redir *redirections, t_mini *mini)
 {
@@ -79,14 +86,14 @@ int	check_redirection(t_tree *root, t_mini *mini)
 	return (0);
 }
 
-void	read_heredoc(t_tree *root, t_mini *mini)
+int	read_heredoc(t_tree *root, t_mini *mini)
 {
 	t_redir	*red;
 
 	if (root == NULL)
-		return ;
+		return (0);
 	red = root->data.redirections;
-	while (red)
+	while (red && mini->exit == 0)
 	{
 		if (red->mode == HEREDOC)
 			red->fd = heredoc(red->file, mini);
@@ -94,6 +101,7 @@ void	read_heredoc(t_tree *root, t_mini *mini)
 	}
 	read_heredoc(root->left, mini);
 	read_heredoc(root->right, mini);
+	return ((mini->exit != 0));
 }
 
 void	reset_fd(int fd_in, int fd_out)

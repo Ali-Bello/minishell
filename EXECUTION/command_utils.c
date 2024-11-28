@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:26 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/25 02:06:11 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/28 19:36:26 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,13 @@ char	*path_join(char *path, char *cmd)
 
 int	check_path(char *cmd, int *status)
 {
+	struct stat	st;
+
+	stat(cmd, &st);
 	if (ft_strchr(cmd, '/'))
 	{
+		if (S_ISDIR(st.st_mode))
+			return (errno = 21, perror(cmd), *status = 126, 1);
 		if (access(cmd, F_OK) == -1)
 		{
 			perror(cmd);
@@ -96,4 +101,16 @@ int	check_builtin(t_tree *root, t_mini *mini, int *exit)
 	}
 	*exit = 0;
 	return (0);
+}
+
+int	get_exit_status(int pid)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	if (WEXITSTATUS(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (status);
 }
