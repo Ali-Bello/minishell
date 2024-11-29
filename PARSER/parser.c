@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/28 00:42:51 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/29 02:58:45 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ t_list	*get_args(t_list *list, t_cmd *data, int size, t_env *env)
 			if (list->s && data->args)
 				data->args = extend_array(data->args, list->s, i++, &size);
 		}
+		if (list->data.ambigous_flag)
+			data->ambigous_flag = 1;
 		tmp = list;
 		list = list->next;
 		free(tmp->s);
@@ -40,7 +42,9 @@ void	merge_words(t_list *list, t_redir *redirs, t_env *env)
 	int	size;
 
 	if (list->type == WORD)
-		expand_rm_quotes(list, list->s, env);
+		expand_rm_quotes(list, list->s, env);	
+	if (!*list->s && list->next)
+		list = list->next;
 	size = get_args_count(list);
 	if (size)
 	{
@@ -71,6 +75,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 	new = malloc(sizeof(t_redir));
 	if (!new)
 		return (NULL);
+	new->ambiguous = list->next->ambiguous_flag;
 	new->mode = list->type;
 	new->next = NULL;
 	tmp = list->next->next;
@@ -133,6 +138,7 @@ void	print_list(t_list *list)
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
 	{
 		printf("node -> {type = [%d], s = [%s]}\n", tmp->type, tmp->s);
+		printf("amibigious redirection == [%d]\n", tmp->data.ambigous_flag);
 		if (tmp->data.cmd)
 			printf("       data -> cmd = [%s]\n", tmp->data.cmd);
 		for (int i = 0; tmp->data.args && tmp->data.args[i]; i++)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 19:39:40 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/29 02:32:02 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@ void	sig_hand(int sig)
 int	convert_and_execute(t_mini *mini)
 {
 	parser(mini->list, mini->env);
+	if (check_ambiguous_redirect(mini->list))
+	{
+		free_list(mini->list);
+		mini->list = NULL;
+		g_global_exit = 1;
+		return (1);
+	}
 	mini->root = convert_to_ast(mini->list);
 	flush_list(mini->list);
 	mini->list = NULL;

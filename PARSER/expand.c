@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/26 23:41:08 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/29 02:52:26 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	expand_exit_status(t_expand *params, int exit_status)
 	params->i += 2;
 }
 
-void	expand_var(t_expand *params, t_env *env)
+void	expand_var(t_expand *params, t_env *env, t_list *node)
 {
 	char	*var_name;
 	char	*value;
@@ -50,7 +50,15 @@ void	expand_var(t_expand *params, t_env *env)
 		return ;
 	}
 	value = get_env(var_name, env);
-	if (!params->quotes_flags[0] && value)
+	if (!value && !params->quotes_flags[0] && node->prev && (node->prev->type == REDIRIN
+	|| node->prev->type == REDIROUT || node->prev->type == APPEND || node->prev->type == HEREDOC))
+	{
+		node->ambiguous_flag = true;
+		params->i = 0;
+		params->res = extend_string(params);
+		params->i++;
+	}
+	else if (!params->quotes_flags[0] && value)
 	{
 		params->res = append_value(params, value);
 		params->to_split = true;
@@ -101,7 +109,7 @@ void	expand_rm_quotes(t_list *node, char *s, t_env *env)
 		else if (s[params.i] == '\'' || s[params.i] == '"')
 			set_quotes_flags(&params);
 		else if (s[params.i] == '$')
-			expand_var(&params, env);
+			expand_var(&params, env, node);
 		else if (s[params.i] == '*')
 			expand_wildcards(&params, node);
 	}

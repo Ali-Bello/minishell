@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/28 19:43:56 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/29 02:51:48 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ typedef struct s_redir
 	t_token			mode;
 	char			*file;
 	int				fd;
+	bool			ambiguous;
 	struct s_redir	*next;
 }					t_redir;
 
@@ -87,15 +88,16 @@ typedef struct s_cmd
 	char			*cmd;
 	char			**args;
 	t_redir			*redirections;
+	int				ambigous_flag;
 }					t_cmd;
 
 typedef struct s_list
 {
 	char			*s;
 	int				expand_flag;
-	int				amibiguous_redir;
 	t_token			type;
 	t_cmd			data;
+	bool			ambiguous_flag;
 	struct s_list	*sub_list;
 	struct s_list	*prev;
 	struct s_list	*next;
@@ -159,6 +161,7 @@ void				print_ast(t_tree *node, int level);
 /** LEXER FUNCTIONS **/
 
 bool				check_syntax_errors(t_list *list);
+bool				check_ambiguous_redirect(t_list *list);
 void				report_error(char *token, int flag);
 void				parse_operators(t_list **list, char *s, int *i);
 void				parse_words(t_list **list, char *s, int *i);
