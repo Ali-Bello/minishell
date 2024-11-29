@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/29 17:36:43 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/29 18:09:05 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,15 @@ void	get_input(t_mini *mini)
 			break ;
 		add_history(input);
 		mini->list = lexer(input);
-		free(input);
-		if (check_syntax_errors(mini->list))
+		if (check_syntax_errors(mini->list, input))
 		{
+			free(input);
 			free_list(mini->list);
 			clear_history();
 			mini->list = NULL;
 			continue ;
 		}
+		free(input);
 		convert_and_execute(mini);
 	}
 	clear_history();

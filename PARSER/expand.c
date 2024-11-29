@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 03:36:24 by marvin            #+#    #+#             */
-/*   Updated: 2024/11/29 02:52:26 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/29 17:03:19 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ void	expand_var(t_expand *params, t_env *env, t_list *node)
 		return ;
 	}
 	value = get_env(var_name, env);
-	if (!value && !params->quotes_flags[0] && node->prev && (node->prev->type == REDIRIN
-	|| node->prev->type == REDIROUT || node->prev->type == APPEND || node->prev->type == HEREDOC))
+	if (!value && !params->quotes_flags[0] && node->prev
+		&& (node->prev->type == REDIRIN || node->prev->type == REDIROUT
+			|| node->prev->type == APPEND || node->prev->type == HEREDOC))
 	{
 		node->ambiguous_flag = true;
 		params->i = 0;

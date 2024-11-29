@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/29 02:51:48 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/29 16:59:51 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,8 @@ void				print_ast(t_tree *node, int level);
 
 /** LEXER FUNCTIONS **/
 
-bool				check_syntax_errors(t_list *list);
+bool				check_syntax_errors(t_list *list, char *input);
+bool				quotes_parenthesis_errors(char *input, int i);
 bool				check_ambiguous_redirect(t_list *list);
 void				report_error(char *token, int flag);
 void				parse_operators(t_list **list, char *s, int *i);

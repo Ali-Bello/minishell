@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/29 02:58:45 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/29 18:02:50 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ t_list	*get_args(t_list *list, t_cmd *data, int size, t_env *env)
 			data->ambigous_flag = 1;
 		tmp = list;
 		list = list->next;
+		if (list)
+			list->prev = tmp->prev;
 		free(tmp->s);
 		free(tmp);
 	}
@@ -42,8 +44,8 @@ void	merge_words(t_list *list, t_redir *redirs, t_env *env)
 	int	size;
 
 	if (list->type == WORD)
-		expand_rm_quotes(list, list->s, env);	
-	if (!*list->s && list->next)
+		expand_rm_quotes(list, list->s, env);
+	if (list->s && !*list->s && list->next)
 		list = list->next;
 	size = get_args_count(list);
 	if (size)
@@ -88,7 +90,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 }
 
 t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect,
-							t_env *env)
+		t_env *env)
 {
 	t_list	*replace;
 
@@ -145,8 +147,9 @@ void	print_list(t_list *list)
 			printf("       data -> cmd.args = [%s]\n", tmp->data.args[i]);
 		for (t_redir *tmp2 = tmp->data.redirections; tmp2; tmp2 = tmp2->next)
 			printf("       data\
-				-> cmd.redirections = {mode = [%d],file = [%s]}\n", tmp2->mode,
-				tmp2->file);
+				-> cmd.redirections = {mode = [%d],file = [%s]}\n",
+					tmp2->mode,
+					tmp2->file);
 		if (tmp->sub_list)
 		{
 			printf(GREEN "---SUB_list\n" RESET);
@@ -176,8 +179,7 @@ void	print_ast(t_tree *node, int level)
 		}
 		if (node->data.redirections)
 		{
-			for (t_redir *tmp2 = node->data.redirections; tmp2;\
-			tmp2 = tmp2->next)
+			for (t_redir *tmp2 = node->data.redirections; tmp2; tmp2 = tmp2->next)
 				printf(" redirections = {mode = [%d], file = [%s]\n",
 					tmp2->mode, tmp2->file);
 		}
@@ -197,10 +199,9 @@ void	print_ast(t_tree *node, int level)
 		printf("SUB tree inside parentheses: \n");
 		// Print the sub-tree inside the parentheses
 		print_ast(node->sub_tree, level + 1);
-		for (t_redir *tmp2 = node->data.redirections; tmp2;\
-			tmp2 = tmp2->next)
-				printf(" redirections = {mode = [%d], file = [%s]\n",
-					tmp2->mode, tmp2->file);
+		for (t_redir *tmp2 = node->data.redirections; tmp2; tmp2 = tmp2->next)
+			printf(" redirections = {mode = [%d], file = [%s]\n", tmp2->mode,
+				tmp2->file);
 		printf("END OF SUB tree inside parentheses:\n");
 		return ;
 	default:
@@ -218,7 +219,7 @@ void	print_ast(t_tree *node, int level)
 		print_ast(node->right, level + 1);
 	}
 }
-/** 
+/**
 int	main(void)
 {
 	char	*buf;
