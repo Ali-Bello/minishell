@@ -6,25 +6,11 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:50 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 19:43:10 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:53:46 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-/*
-else if (redirections->mode == REDIRIN)
-	{
-		if (redirections->amibiguous_redir == 1)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(redirections->file, 2);
-			ft_putstr_fd("ambiguous redirect\n", 2);
-			return (-1);
-		}
-		fd = open(redirections->file, O_RDONLY);
-	}
-*/
 
 void	free_heredoc(char *line, t_mini *mini)
 {
@@ -39,6 +25,13 @@ int	redirections_type(t_redir *redirections, t_mini *mini)
 
 	(void)mini;
 	fd = -1;
+	if (redirections->ambiguous == true)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(redirections->file, 2);
+		ft_putstr_fd("ambiguous redirect\n", 2);
+		return (-1);
+	}
 	if (redirections->mode == APPEND)
 		fd = open(redirections->file, O_CREAT | O_RDWR | O_APPEND, 0644);
 	else if (redirections->mode == REDIROUT)
@@ -49,14 +42,6 @@ int	redirections_type(t_redir *redirections, t_mini *mini)
 		fd = redirections->fd;
 	return (fd);
 }
-/*
-if (fd == -1)
-{
-	if (redirections->amibiguous_redir == 0)
-		perror(redirections->file);
-	return (1);
-}
-*/
 
 int	check_redirection(t_tree *root, t_mini *mini)
 {
@@ -71,7 +56,8 @@ int	check_redirection(t_tree *root, t_mini *mini)
 			fd = redirections_type(redirections, mini);
 			if (fd == -1)
 			{
-				perror(redirections->file);
+				if (redirections->ambiguous == false)
+					perror(redirections->file);
 				return (1);
 			}
 			if (redirections->mode == APPEND || redirections->mode == REDIROUT)
