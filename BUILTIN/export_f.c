@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:57 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 19:16:59 by anamella         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:23:40 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,17 @@ void	export_error(char *name)
 
 int	check_var(char *name)
 {
-	int	len;
+	int	i;
 
-	len = ft_strlen(name) - 1;
+	i = 0;
 	if (!ft_isalpha(name[0]) && name[0] != '_')
 		return (export_error(name), 1);
-	if (!ft_isalpha(name[len]) && name[len] != '_' && !ft_isdigit(name[len]))
-		return (export_error(name), 1);
+	while (name[i])
+	{
+		if (!ft_isalpha(name[i]) && !ft_isdigit(name[i]) && name[i] != '_')
+			return (export_error(name), 1);
+		i++;
+	}
 	return (0);
 }
 
@@ -72,7 +76,8 @@ int	export_f(char **env, t_mini *mini)
 	exit_status = 0;
 	while (env && env[i])
 	{
-		exit_status = check_and_add(env[i], env_l);
+		if (check_and_add(env[i], env_l))
+			exit_status = 1;
 		i++;
 	}
 	return (exit_status);
