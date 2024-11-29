@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_f.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:57 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 23:44:50 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/11/29 17:23:40 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ void	export_error(char *name)
 
 int	check_var(char *name)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!ft_isalpha(name[0]) && name[0] != '_')
-			return (export_error(name), 1);
+		return (export_error(name), 1);
 	while (name[i])
 	{
 		if (!ft_isalpha(name[i]) && !ft_isdigit(name[i]) && name[i] != '_')
