@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/12/04 00:32:04 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/04 00:41:39 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,6 @@ void	print_ast(t_tree *node, int level)
 		print_ast(node->right, level + 1);
 	}
 }
-/**
 int	main(void)
 {
 	char	*buf;

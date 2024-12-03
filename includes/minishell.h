@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/12/03 22:48:43 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/04 00:42:02 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ char				**count_env(t_env *env);
 void				create_char_env(char **ev, t_env *env);
 char				**convert_env(t_env *env);
 void				free_char_env(char **env);
-int					heredoc(const char *delimiter, t_mini *mini);
+int					heredoc(char *delimiter, t_mini *mini);
 int					execute_ast(t_tree *root, t_mini *mini);
 void				child_process1(t_tree *root, int *pipefd, t_mini *mini);
 void				child_process2(t_tree *root, int *pipefd, t_mini *mini);
