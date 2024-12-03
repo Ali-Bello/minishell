@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/12/03 06:03:54 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 22:06:48 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void	parser(t_list *list, t_env *env)
 			tmp[0] = tmp[0]->next;
 	}
 }
-// /**
+/*
 void	print_list(t_list *list)
 {
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
@@ -172,7 +172,6 @@ void	print_ast(t_tree *node, int level)
 	case CMD:
 		printf("CMD: %s\n", node->data.cmd);
 		printf("delayed flag = [%d]\n", node->data.delayed_expand_flag);
-
 		if (node->data.cmd && node->data.args)
 		{
 			printf(" args: ");
@@ -181,8 +180,7 @@ void	print_ast(t_tree *node, int level)
 		}
 		if (node->data.redirections)
 		{
-			for (t_redir *tmp2 = node->data.redirections; tmp2;
-			tmp2 = tmp2->next)
+			for (t_redir *tmp2 = node->data.redirections; tmp2; tmp2 = tmp2->next)
 				printf(" redirections = {mode = [%d], file = [%s]\n",
 					tmp2->mode, tmp2->file);
 		}
@@ -222,7 +220,7 @@ void	print_ast(t_tree *node, int level)
 		print_ast(node->right, level + 1);
 	}
 }
-/**
+
 int	main(void)
 {
 	char	*buf;
@@ -240,4 +238,4 @@ int	main(void)
 	free(buf);
 	return (0);
 }
-// **/
+*/

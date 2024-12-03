@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 22:45:37 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/03 05:10:58 by aderraj          ###   ########.fr       */
+/*   Created: 2024/12/03 18:46:44 by anamella          #+#    #+#             */
+/*   Updated: 2024/12/03 19:17:19 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int	execute_parenthesis(t_tree *root, t_mini *mini)
 
 	status = 0;
 	signal(SIGINT, SIG_IGN);
+	check_redirection(root, mini);
 	pid = fork();
 	if (pid == 0)
 	{

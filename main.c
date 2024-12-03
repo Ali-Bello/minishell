@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/03 06:03:27 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 19:15:31 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	get_input(t_mini *mini)
 	{
 		signal(SIGINT, sig_hand);
 		mini->exit = 0;
-		input = readline(BLUE"minishell$ "RESET);
+		input = readline(BLUE "mminishell$ " RESET);
 		if (!input)
 			break ;
 		add_history(input);
@@ -60,6 +60,7 @@ void	get_input(t_mini *mini)
 		}
 		free(input);
 		convert_and_execute(mini);
+		free_and_reset(mini);
 	}
 	clear_history();
 }

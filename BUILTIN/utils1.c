@@ -6,26 +6,11 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:19 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 17:37:21 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/03 19:10:26 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static t_env	*start_env(void)
-{
-	t_env	*env;
-	char	*var;
-	char	*val;
-
-	env = malloc(sizeof(t_env));
-	if (!env)
-		return (NULL);
-	var = ft_strdup("PWD");
-	val = getcwd(NULL, 0);
-	add_env(&env, new_env(var, val));
-	return (env);
-}
 
 t_env	*create_env(char **env)
 {
@@ -36,9 +21,7 @@ t_env	*create_env(char **env)
 
 	i = 0;
 	env_l = NULL;
-	if (!env)
-		return (start_env());
-	while (env[i])
+	while (env && env[i])
 	{
 		var = get_var(env[i]);
 		val = get_val(env[i]);

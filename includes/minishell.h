@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/12/03 06:02:58 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 18:57:21 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,17 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
+# include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <sys/stat.h>
-# include <limits.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
@@ -242,7 +242,7 @@ char				*get_env(char *name, t_env *env);
 int					set_env(char *var, char *val, t_env **env);
 int					export_f(char **env, t_mini *mini);
 int					unset_f(char **env, t_mini *mini);
-int					env_f(t_env *env, int flag);
+int					env_f(char **args, t_env *env, int flag);
 int					echo_f(char **args, t_mini *mini);
 int					cd_f(char **path, t_mini *mini);
 int					pwd_f(char **args, t_mini *mini);

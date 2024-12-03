@@ -3,19 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   env_f.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:40 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/30 01:06:59 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 18:50:05 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	env_f(t_env *env, int flag)
+int	env_f(char **args, t_env *env, int flag)
 {
 	char	*val;
 
+	if (args && args[1])
+		return (1);
 	while (env)
 	{
 		if (flag == 1)
