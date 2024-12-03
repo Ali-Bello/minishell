@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:57 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/29 17:23:40 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/03 18:51:08 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	export_f(char **env, t_mini *mini)
 	i = 0;
 	env_l = &mini->env;
 	if (!env || !*env)
-		return (env_f(*env_l, 1), 0);
+		return (env_f(NULL, *env_l, 1), 0);
 	exit_status = 0;
 	while (env && env[i])
 	{

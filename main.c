@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/29 02:32:02 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 19:15:31 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,6 @@ void	sig_hand(int sig)
 int	convert_and_execute(t_mini *mini)
 {
 	parser(mini->list, mini->env);
-	if (check_ambiguous_redirect(mini->list))
-	{
-		free_list(mini->list);
-		mini->list = NULL;
-		g_global_exit = 1;
-		return (1);
-	}
 	mini->root = convert_to_ast(mini->list);
 	flush_list(mini->list);
 	mini->list = NULL;
@@ -58,15 +51,16 @@ void	get_input(t_mini *mini)
 			break ;
 		add_history(input);
 		mini->list = lexer(input);
-		free(input);
-		if (check_syntax_errors(mini->list))
+		if (check_syntax_errors(mini->list, input))
 		{
+			free(input);
 			free_list(mini->list);
-			clear_history();
 			mini->list = NULL;
 			continue ;
 		}
+		free(input);
 		convert_and_execute(mini);
+		free_and_reset(mini);
 	}
 	clear_history();
 }
@@ -74,15 +68,15 @@ void	get_input(t_mini *mini)
 int	main(int ac, char **av, char **ev)
 {
 	t_mini	*mini;
-	int		exit_statu;
+	int		exit_status;
 
 	(void)ac;
 	(void)av;
 	signal(SIGQUIT, SIG_IGN);
 	mini = create_mini(ev);
 	get_input(mini);
-	exit_statu = mini->exit;
+	exit_status = mini->exit;
 	free_mini(mini);
-	exit(exit_statu);
+	exit(exit_status);
 	return (0);
 }

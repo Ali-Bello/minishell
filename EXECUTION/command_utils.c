@@ -6,7 +6,7 @@
 /*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:26 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 19:36:26 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/03 18:52:58 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	check_builtin(t_tree *root, t_mini *mini, int *exit)
 	builtin_f[5] = &exit_f;
 	i = 0;
 	if (ft_strcmp(root->data.cmd, "env") == 0)
-		return (*exit = env_f(mini->env, 0), 1);
+		return (*exit = env_f(root->data.args, mini->env, 0), 1);
 	while (builtin[i])
 	{
 		if (ft_strcmp(root->data.cmd, builtin[i]) == 0)
