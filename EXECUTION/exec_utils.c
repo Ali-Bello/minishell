@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:45:37 by anamella          #+#    #+#             */
-/*   Updated: 2024/11/28 19:46:20 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/03 05:10:58 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	execute_command(t_tree *root, t_mini *mini)
 	signal(SIGINT, SIG_IGN);
 	if (check_redirection(root, mini) == 1)
 		return (EXIT_FAILURE);
+	check_delayed_expansion(root, mini->env);
 	if (check_builtin(root, mini, &status) == 1)
 		return (status);
 	pid = fork();
@@ -44,6 +45,7 @@ int	execute_and(t_tree *root, t_mini *mini)
 
 	status_left = execute_ast(root->left, mini);
 	reset_fd(mini->infd, mini->outfd);
+	g_global_exit = status_left;
 	if (status_left == 0)
 		return (execute_ast(root->right, mini));
 	else
@@ -56,6 +58,7 @@ int	execute_or(t_tree *root, t_mini *mini)
 
 	status_left = execute_ast(root->left, mini);
 	reset_fd(mini->infd, mini->outfd);
+	g_global_exit = status_left;
 	if (status_left != 0)
 		return (execute_ast(root->right, mini));
 	else

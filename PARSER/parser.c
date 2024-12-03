@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 20:05:20 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/29 18:02:50 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 06:03:54 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ t_list	*get_args(t_list *list, t_cmd *data, int size, t_env *env)
 			if (list->s && data->args)
 				data->args = extend_array(data->args, list->s, i++, &size);
 		}
-		if (list->data.ambigous_flag)
-			data->ambigous_flag = 1;
+		data->ambigous_flag = list->data.ambigous_flag;
+		data->delayed_expand_flag = list->data.delayed_expand_flag;
 		tmp = list;
 		list = list->next;
 		if (list)
@@ -84,7 +84,7 @@ t_list	*add_redir_node(t_redir **redirections, t_list *list)
 	new->file = ft_strdup(list->next->s);
 	free(list->next->s);
 	free(list->next);
-	list->next = NULL;
+	list->next = tmp;
 	append_redirection(redirections, new);
 	return (tmp);
 }
@@ -101,6 +101,7 @@ t_list	*get_redirections(t_list *list, t_list *current, t_redir **redirect,
 		if (list && (list->type == REDIRIN || list->type == REDIROUT
 				|| list->type == APPEND || list->type == HEREDOC))
 		{
+			remove_heredeoc_quotes(list);
 			if (list->type != HEREDOC && list->next)
 				expand_rm_quotes(list->next, list->next->s, env);
 			if (list->next == current)
@@ -140,7 +141,6 @@ void	print_list(t_list *list)
 	for (t_list *tmp = list; tmp; tmp = tmp->next)
 	{
 		printf("node -> {type = [%d], s = [%s]}\n", tmp->type, tmp->s);
-		printf("amibigious redirection == [%d]\n", tmp->data.ambigous_flag);
 		if (tmp->data.cmd)
 			printf("       data -> cmd = [%s]\n", tmp->data.cmd);
 		for (int i = 0; tmp->data.args && tmp->data.args[i]; i++)
@@ -170,7 +170,9 @@ void	print_ast(t_tree *node, int level)
 	switch (node->type)
 	{
 	case CMD:
-		printf("CMD: %s", node->data.cmd);
+		printf("CMD: %s\n", node->data.cmd);
+		printf("delayed flag = [%d]\n", node->data.delayed_expand_flag);
+
 		if (node->data.cmd && node->data.args)
 		{
 			printf(" args: ");
@@ -179,7 +181,8 @@ void	print_ast(t_tree *node, int level)
 		}
 		if (node->data.redirections)
 		{
-			for (t_redir *tmp2 = node->data.redirections; tmp2; tmp2 = tmp2->next)
+			for (t_redir *tmp2 = node->data.redirections; tmp2;
+			tmp2 = tmp2->next)
 				printf(" redirections = {mode = [%d], file = [%s]\n",
 					tmp2->mode, tmp2->file);
 		}
@@ -199,10 +202,10 @@ void	print_ast(t_tree *node, int level)
 		printf("SUB tree inside parentheses: \n");
 		// Print the sub-tree inside the parentheses
 		print_ast(node->sub_tree, level + 1);
+		printf("END OF SUB tree inside parentheses:\n");
 		for (t_redir *tmp2 = node->data.redirections; tmp2; tmp2 = tmp2->next)
 			printf(" redirections = {mode = [%d], file = [%s]\n", tmp2->mode,
 				tmp2->file);
-		printf("END OF SUB tree inside parentheses:\n");
 		return ;
 	default:
 		printf("Unknown node type\n");

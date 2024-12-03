@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/29 16:59:51 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 06:02:58 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 # include <sys/stat.h>
+# include <limits.h>
 
 # define EXIT_STATUS 0
 # define RED "\x1b[31m"
@@ -88,7 +89,8 @@ typedef struct s_cmd
 	char			*cmd;
 	char			**args;
 	t_redir			*redirections;
-	int				ambigous_flag;
+	int				delayed_expand_flag;
+	bool			ambigous_flag;
 }					t_cmd;
 
 typedef struct s_list
@@ -111,6 +113,7 @@ typedef struct s_expand
 	int				res_idx;
 	int				res_size;
 	int				quotes_flags[2];
+	int				name_len;
 	bool			to_split;
 	bool			to_sort;
 	t_list			*idx_node;
@@ -186,22 +189,34 @@ char				**extend_array(char **arr, char *new, int i, int *size);
 void				merge_words(t_list *list, t_redir *redirs, t_env *env);
 void				arrange_nodes(t_list *list[3], t_redir **redirections,
 						t_env *env);
+int					get_array_len(char **array);
 
+char				*str_cut(char *str, int idx);
 /*-- EXPANDER FUNCTIONS --*/
 
 void				expand_rm_quotes(t_list *node, char *s, t_env *mini);
 char				*extend_string(t_expand *params);
 char				*append_value(t_expand *params, char *value);
 char				*expand_in_heredoc(char *input);
+bool				special_expansion(t_expand *params, t_list *node,
+						char *value);
+void				remove_heredeoc_quotes(t_list *list);
+void				insert_value(t_expand *params, char **cmd_args, int idx,
+						int len);
+
 /**--__ env variables functions __--**/
 
 void				expand_exit_status(t_expand *params, int exit_status);
 char				*get_varname(char *s, int *j);
-bool				innormal_var(t_expand *params);
+bool				innormal_var(t_expand *params, t_list *node);
 void				split_node(t_list *node);
+void				check_delayed_expansion(t_tree *root, t_env *env);
+char				**expand_delayed_var(char **args, t_env *env);
+void				expand_delayed_exit_status(char **args, int *idx);
 
 /**--__wildcard functions__--**/
 
+bool				check_wildcard(t_expand *params, t_list *node);
 void				expand_wildcards(t_expand *params, t_list *node);
 char				*get_pattern(t_expand *params);
 void				add_match(t_wildcard *rules, char *str);

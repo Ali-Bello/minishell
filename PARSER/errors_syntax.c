@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 23:29:53 by aderraj           #+#    #+#             */
-/*   Updated: 2024/11/29 17:30:44 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/03 06:08:34 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,12 @@ bool	check_parenthesis(t_list *node)
 			return (report_error(")", 0), true);
 		else if ((node->prev && node->prev->type != OR
 				&& node->prev->type != AND && node->prev->type != PIPE)
-			|| (node->next && node->next->type != OR && node->next->type != AND
-				&& node->next->type != PIPE))
+			|| (node->next && (node->next->type == WORD
+					|| node->next->type == PARENTHESIS)))
 		{
 			if (node->next && node->next->type == PARENTHESIS)
 				return (report_error("(", 0), true);
-			else if (node->next)
+			else if (node->next == WORD)
 				return (report_error(node->next->s, 0), true);
 			tmp = lexer(node->s);
 			return (report_error(tmp->s, 0), free_list(tmp), true);
@@ -94,6 +94,8 @@ bool	check_syntax_errors(t_list *list, char *input)
 	tmp = list;
 	while (tmp)
 	{
+		if (tmp->s && (!ft_strcmp(tmp->s, "&") || !ft_strcmp(tmp->s, ";")))
+			return (report_error(tmp->s, 0), (void)(g_global_exit = 2), true);
 		if (check_parenthesis(tmp) || check_redirections(tmp))
 			return ((void)(g_global_exit = 2), true);
 		else if (tmp->type == PIPE || tmp->type == OR || tmp->type == AND)
