@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 19:52:14 by aderraj           #+#    #+#             */
-/*   Updated: 2024/12/03 18:57:21 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/03 22:48:43 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,8 +190,9 @@ void				merge_words(t_list *list, t_redir *redirs, t_env *env);
 void				arrange_nodes(t_list *list[3], t_redir **redirections,
 						t_env *env);
 int					get_array_len(char **array);
-
+void				set_quotes_flags(t_expand *params);
 char				*str_cut(char *str, int idx);
+
 /*-- EXPANDER FUNCTIONS --*/
 
 void				expand_rm_quotes(t_list *node, char *s, t_env *mini);
