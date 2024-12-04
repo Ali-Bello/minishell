@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 20:25:09 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/04 21:44:45 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	get_input(t_mini *mini)
 		mini->exit = 0;
 		input = readline(BLUE "minishell$ " RESET);
 		if (!input)
-			break ;
+			exit_f(NULL, mini);
 		add_history(input);
 		mini->list = lexer(input);
 		if (check_syntax_errors(mini->list, input))
