@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:52 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 23:43:34 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/05 00:05:12 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int	exit_f(char **args, t_mini *mini)
 
 	status = g_global_exit;
 	count = count_args(args);
-	ft_putstr_fd("exit\n", 1);
+	ft_putstr_fd("exit\n", 2);
 	if (args)
 		status = get_exit(args[0], mini);
 	if (count > 1)
