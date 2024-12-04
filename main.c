@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 01:57:19 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/04 20:25:09 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@ int	convert_and_execute(t_mini *mini)
 	mini->list = NULL;
 	mini->char_env = convert_env(mini->env);
 	if (read_heredoc(mini->root, mini) == 1)
+	{
+		free_heredoc_fd(mini->root);
 		return (g_global_exit = mini->exit, 1);
+	}
 	g_global_exit = execute_ast(mini->root, mini);
-	free_and_reset(mini);
+	free_heredoc_fd(mini->root);
 	return (0);
 }
 
@@ -69,6 +72,8 @@ void	get_input(t_mini *mini)
 			continue ;
 		}
 		free(input);
+		mini->infd = dup(0);
+		mini->outfd = dup(1);
 		convert_and_execute(mini);
 		free_and_reset(mini);
 	}
