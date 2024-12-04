@@ -6,7 +6,7 @@
 /*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 00:31:28 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/04 01:57:19 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,16 @@ int	convert_and_execute(t_mini *mini)
 	return (0);
 }
 
+void	print_banner(void)
+{
+	printf(BLUE" __  __ ___ _   _ ___ ____  _   _ _____ _     _     \n");
+	printf("|  \\/  |_ _| \\ | |_ _/ ___|| | | | ____| |   | |    \n");
+	printf("| |\\/| || ||  \\| || |\\___ \\| |_| |  _| | |   | |    \n");
+	printf("| |  | || || |\\  || | ___) |  _  | |___| |___| |___ \n");
+	printf("|_|  |_|___|_| \\_|___|____/|_| |_|_____|_____|_____|\n"RESET);
+	printf(YELLOW"	    by: aderraj && anamella					\n\n"RESET);
+}
+
 void	get_input(t_mini *mini)
 {
 	char	*input;
@@ -46,7 +56,7 @@ void	get_input(t_mini *mini)
 	{
 		signal(SIGINT, sig_hand);
 		mini->exit = 0;
-		input = readline(BLUE "mminishell$ " RESET);
+		input = readline(BLUE "minishell$ " RESET);
 		if (!input)
 			break ;
 		add_history(input);
@@ -73,6 +83,7 @@ int	main(int ac, char **av, char **ev)
 	(void)ac;
 	(void)av;
 	signal(SIGQUIT, SIG_IGN);
+	print_banner();
 	mini = create_mini(ev);
 	get_input(mini);
 	exit_status = mini->exit;
