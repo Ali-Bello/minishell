@@ -62,4 +62,5 @@ fclean: clean
 re: fclean all
 
 .PHONY: all libft clean fclean re
+.SECONDARY:	$(OBJS)
 # .SILENT:

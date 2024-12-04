@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_f.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:44:52 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 21:45:19 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/04 22:35:26 by anamella         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,9 @@ int	check_arg(char *s)
 
 int	get_exit(char *s, t_mini *mini)
 {
+	(void)mini;
 	if (s == NULL)
-		return (mini->exit);
+		return (g_global_exit);
 	if (check_arg(s))
 	{
 		ft_putstr_fd("exit: ", 2);
