@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anamella <anamella@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 22:36:52 by anamella         ###   ########.fr       */
+/*   Updated: 2024/12/04 23:46:57 by aderraj          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ int	main(int ac, char **av, char **ev)
 	(void)ac;
 	(void)av;
 	signal(SIGQUIT, SIG_IGN);
-	print_banner();
 	mini = create_mini(ev);
 	get_input(mini);
 	exit_status = mini->exit;

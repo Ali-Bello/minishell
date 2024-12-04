@@ -19,7 +19,7 @@ MAGENTA	:= \033[35m
 BOLD := \033[1m
 END := \033[0m
 
-# .SILENT:
+.SILENT:
 
 all: $(NAME)
 
