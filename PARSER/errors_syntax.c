@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   errors_syntax.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 23:29:53 by aderraj           #+#    #+#             */
-/*   Updated: 2024/12/04 01:43:35 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/10 05:32:59 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,17 +56,22 @@ bool	check_parenthesis(t_list *node)
 	{
 		if (is_empty_string(node->s))
 			return (report_error(")", 0), true);
-		else if ((node->prev && node->prev->type != OR
-				&& node->prev->type != AND && node->prev->type != PIPE)
-			|| (node->next && (node->next->type == WORD
-					|| node->next->type == PARENTHESIS)))
+		else if (!node->prev || node->prev->type == WORD
+			|| node->prev->type == PARENTHESIS
+			|| !node->next || node->next->type == WORD
+			|| node->next->type == PARENTHESIS)
 		{
-			if (node->next && node->next->type == PARENTHESIS)
+			if ((node->next && node->next->type == PARENTHESIS)
+				|| (node->prev && node->prev->type == PARENTHESIS))
 				return (report_error("(", 0), true);
-			else if (node->next == WORD)
+			else if (node->next && node->next->type == WORD)
 				return (report_error(node->next->s, 0), true);
+			else if (node->prev && node->prev->type == WORD)
+				return (report_error(node->s, 0), true);
 			tmp = lexer(node->s);
-			return (report_error(tmp->s, 0), free_list(tmp), true);
+			if (check_syntax_errors(tmp, node->s))
+				return (free_list(tmp), true);
+			free_list(tmp);
 		}
 	}
 	return (false);

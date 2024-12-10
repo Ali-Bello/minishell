@@ -6,7 +6,7 @@ END			:=	\033[0m
 ERASE		:= \033[2K
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -fsanitize=address -g3
 MAKEFLAGS += --no-print-directory
 
 OBJS_DIR = objs

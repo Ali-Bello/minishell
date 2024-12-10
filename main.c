@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aderraj <aderraj@student.42.fr>            +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 02:23:35 by anamella          #+#    #+#             */
-/*   Updated: 2024/12/04 23:46:57 by aderraj          ###   ########.fr       */
+/*   Updated: 2024/12/10 05:04:23 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,6 @@ void	sig_hand(int sig)
 	rl_replace_line("", 0);
 	rl_redisplay();
 	g_global_exit = 130;
-}
-
-void	print_banner(void)
-{
-	printf(BLUE" __  __ ___ _   _ ___ ____  _   _ _____ _     _     \n");
-	printf("|  \\/  |_ _| \\ | |_ _/ ___|| | | | ____| |   | |    \n");
-	printf("| |\\/| || ||  \\| || |\\___ \\| |_| |  _| | |   | |    \n");
-	printf("| |  | || || |\\  || | ___) |  _  | |___| |___| |___ \n");
-	printf("|_|  |_|___|_| \\_|___|____/|_| |_|_____|_____|_____|\n"RESET);
-	printf(YELLOW"	    by: aderraj && anamella					\n\n"RESET);
 }
 
 int	convert_and_execute(t_mini *mini)
